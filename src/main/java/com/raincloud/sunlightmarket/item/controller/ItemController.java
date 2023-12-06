@@ -23,13 +23,13 @@ public class ItemController {
     private final ItemService itemService;
 
     //상품 등록
-    //상품 등록
     @PostMapping("/add")
     public ApiResponse<ItemResponseDto> addItem(
-            @RequestBody ItemRequestDto requestDto
+            @RequestBody ItemRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
-            ItemResponseDto responseDto = itemService.addItem(requestDto);
+            ItemResponseDto responseDto = itemService.addItem(requestDto, userDetails.getUser());
             ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
             return new ApiResponse<ItemResponseDto>(HttpStatus.CREATED.value(),"아이템 추가 성공했습니다",responseDto);
         }catch (RejectedExecutionException | IllegalArgumentException ex){

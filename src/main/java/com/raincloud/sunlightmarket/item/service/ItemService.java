@@ -5,6 +5,7 @@ import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
 import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.item.repository.ItemRepository;
+import com.raincloud.sunlightmarket.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +19,9 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public ItemResponseDto addItem(ItemRequestDto requestDto) {
-        // Dto -> Entity
-        Item item = new Item(requestDto);
-        Item saveItem = itemRepository.save(item);
+    public ItemResponseDto addItem(ItemRequestDto requestDto, User user) {
+        Item item = new Item(requestDto,user);
+        itemRepository.save(item);
         return new ItemResponseDto(item);
     }
 

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 public class ItemResponseDto{
-    private Long seller_id;
+    private String nickname;
     private String title;
     private String image;
     private String price;
@@ -21,7 +21,7 @@ public class ItemResponseDto{
 
     public ItemResponseDto(Item item) {
         this.title = item.getTitle();
-        this.seller_id = item.getSeller_id();
+        this.nickname = item.getUser().getNickname();
         this.content = item.getContent();
         this.image = item.getImage();
         this.price = item.getPrice();
