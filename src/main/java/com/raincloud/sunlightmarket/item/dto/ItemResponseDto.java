@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Getter
 @RequiredArgsConstructor
 public class ItemResponseDto extends CommonResponseDto {
     private Long seller_id;

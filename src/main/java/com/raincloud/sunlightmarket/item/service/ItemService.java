@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
@@ -23,6 +26,7 @@ public class ItemService {
     }
 
 
+
     @Transactional
     public void updateItem(Long itemId, String title) {
         Item findItem = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
@@ -35,4 +39,17 @@ public class ItemService {
         itemRepository.delete(finditem);
     }
         }
+
+
+    public ItemResponseDto getItem(Long itemId){
+        Item item = itemRepository.findById(itemId).orElse(null);
+        return new ItemResponseDto(item);
+    }
+
+    public List<ItemResponseDto> getAllItems() {
+        return itemRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(ItemResponseDto::new)
+                .collect(Collectors.toList());
+    }
+}
 
