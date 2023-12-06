@@ -1,5 +1,6 @@
 package com.raincloud.sunlightmarket.item.controller;
 
+import com.raincloud.sunlightmarket.item.dto.ItemAllResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemRequestDto;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.service.ItemService;
@@ -20,8 +21,9 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @PostMapping("/post")
-    public ResponseEntity<ItemResponseDto> addPost(
+    //상품 등록
+    @PostMapping("/add")
+    public ResponseEntity<ItemResponseDto> addItem(
             @RequestBody ItemRequestDto requestDto
     ) {
         try {
