@@ -23,13 +23,13 @@ public class ItemController {
     private final ItemService itemService;
 
     //상품 등록
-    //상품 등록
     @PostMapping("/add")
     public ApiResponse<ItemResponseDto> addItem(
-            @RequestBody ItemRequestDto requestDto
+            @RequestBody ItemRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
-            ItemResponseDto responseDto = itemService.addItem(requestDto);
+            ItemResponseDto responseDto = itemService.addItem(requestDto, userDetails.getUser());
             ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
             return new ApiResponse<ItemResponseDto>(HttpStatus.CREATED.value(),"아이템 추가 성공했습니다",responseDto);
         }catch (RejectedExecutionException | IllegalArgumentException ex){
@@ -37,14 +37,17 @@ public class ItemController {
         }
     }
 
-    @PutMapping("/items/{itemsId}")
-    public ResponseEntity<Void> updatePost(
-        @PathVariable Long itemId,
-        @RequestBody ItemUpdateRequest request
+    //상품 업데이트
+    @PutMapping("")
+    public ApiResponse<ItemResponseDto> updatePost(
+            @RequestParam Long id,
+            @RequestBody ItemUpdateRequest request,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        itemService.updateItem(itemId, request.getTitle());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        ItemResponseDto responseDto = itemService.updateItem(id, request, userDetails.getUser());
+        return new ApiResponse<ItemResponseDto>(HttpStatus.OK.value(),"아이템 수정 성공했습니다",responseDto);
     }
+
     @DeleteMapping("/items/{itemsId}")
     public ResponseEntity<Void> deletePost(
     @PathVariable Long itemId

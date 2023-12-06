@@ -2,9 +2,12 @@ package com.raincloud.sunlightmarket.item.entity;
 
 import com.raincloud.sunlightmarket.global.entity.Timestamped;
 import com.raincloud.sunlightmarket.item.dto.ItemRequestDto;
+import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
+import com.raincloud.sunlightmarket.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -15,8 +18,9 @@ public class Item extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long seller_id;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column
     private String title;
@@ -39,9 +43,9 @@ public class Item extends Timestamped {
     @Column
     private Boolean delivered;
 
-    public Item(ItemRequestDto requestDto){
-        this.seller_id = requestDto.getSeller_id();
-        this.title = requestDto.getTitle();
+    public Item(ItemRequestDto requestDto, User user){
+        this.user = user;
+        title = requestDto.getTitle();
         image = requestDto.getImage();
         price = requestDto.getPrice();
         content = requestDto.getContent();
@@ -49,7 +53,11 @@ public class Item extends Timestamped {
         completed = false;
         delivered = false;
     }
-public void updateTitle(String title) {
-        this.title = title;
-}
+public void update(ItemUpdateRequest requestDto) {
+    title = requestDto.getTitle();
+    image = requestDto.getImage();
+    price = requestDto.getPrice();
+    content = requestDto.getContent();
+    address = requestDto.getAddress();
+    }
 }

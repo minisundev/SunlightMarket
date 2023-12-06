@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class ItemRequestDto {
-    private Long seller_id;
     private String title;
     private String image;
     private String price;
