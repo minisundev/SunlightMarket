@@ -1,0 +1,42 @@
+package com.raincloud.sunlightmarket.user.controller;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
+import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
+import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
+import com.raincloud.sunlightmarket.user.service.KakaoService;
+import com.raincloud.sunlightmarket.user.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@Controller
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final UserService userService;
+    private final KakaoService kakaoService;
+
+    @PostMapping("/signup")
+    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody SingUpRequestDto requestDto) {
+        SignUpResponseDto responseDto = userService.signUp(requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/kakao/callback")
+    public String kakaoLogin(@RequestBody String code, HttpServletResponse response) throws JsonProcessingException {
+        String token = kakaoService.kakaoLogin(code);
+
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
+        response.addCookie(cookie);
+
+        return null;
+    }
+}

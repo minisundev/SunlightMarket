@@ -22,7 +22,7 @@ public class User extends Timestamped {
     private Long kakao_id;
 
     @Column(nullable = false)
-    private String username;
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
@@ -38,13 +38,21 @@ public class User extends Timestamped {
     private UserRoleEnum role;
 
     @Builder
-    public User(final Long id, final Long kakao_id, final String username, final String password, final String email, final String intro, final UserRoleEnum role) {
+    public User(final Long id, final Long kakao_id, final String nickname, final String password, final String email, final String intro, final UserRoleEnum role) {
         this.id = id;
         this.kakao_id = kakao_id;
-        this.username = username;
+        this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.intro = intro;
+        this.role = role;
+    }
+
+    public User(Long kakao_id, String nickname, String password, String email, UserRoleEnum role) {
+        this.kakao_id = kakao_id;
+        this.nickname = nickname;
+        this.password = password;
+        this.email = email;
         this.role = role;
     }
 

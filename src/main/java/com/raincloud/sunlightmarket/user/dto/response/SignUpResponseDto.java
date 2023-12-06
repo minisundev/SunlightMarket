@@ -7,13 +7,13 @@ import lombok.Getter;
 public class SignUpResponseDto {
 
     private final Long id;
-    private final String username;
+    private final String nickname;
     private final String email;
 
     @Builder
-    public SignUpResponseDto(final Long id, final String username, final String email) {
+    public SignUpResponseDto(final Long id, final String nickname, final String email) {
         this.id = id;
-        this.username = username;
+        this.nickname = nickname;
         this.email = email;
     }
 }
