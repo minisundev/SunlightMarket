@@ -1,13 +1,16 @@
 package com.raincloud.sunlightmarket.user.service;
 
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
+import com.raincloud.sunlightmarket.user.dto.request.ProfileRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
+import com.raincloud.sunlightmarket.user.dto.response.ProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
 import com.raincloud.sunlightmarket.user.entity.User;
 import com.raincloud.sunlightmarket.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -57,6 +60,23 @@ public class UserService {
                 .id(user.getId())
                 .nickname(nickname)
                 .email(email)
+                .build();
+    }
+
+    @Transactional
+    public ProfileResponseDto updateProfile(final User user, final ProfileRequestDto profileRequestDto) {
+        Optional<User> findUser = userRepository.findByNickname(profileRequestDto.getNickname());
+        if (findUser.isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임 입니다.");
+        }
+
+        User loginUser = userRepository.findById(user.getId()).orElseThrow();
+        loginUser.updateProfile(profileRequestDto.getNickname(), profileRequestDto.getIntro());
+
+        return ProfileResponseDto.builder()
+                .email(loginUser.getEmail())
+                .nickname(loginUser.getNickname())
+                .intro(loginUser.getIntro())
                 .build();
     }
 }
