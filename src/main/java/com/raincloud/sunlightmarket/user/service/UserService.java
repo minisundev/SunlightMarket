@@ -21,7 +21,7 @@ public class UserService {
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     public SignUpResponseDto signUp(SingUpRequestDto singUpRequestDto) {
-        System.out.println("service");
+
         String nickname = singUpRequestDto.getNickname();
         String password = passwordEncoder.encode(singUpRequestDto.getPassword());
 
@@ -49,7 +49,7 @@ public class UserService {
                 .password(password)
                 .email(email)
                 .intro(singUpRequestDto.getIntro())
-                .role(UserRoleEnum.USER)
+                .role(roleEnum)
                 .build();
         user = userRepository.save(user);
 

@@ -12,7 +12,7 @@ public class SingUpRequestDto {
     private final String password;
     private final String email;
     private final String intro;
-    private final boolean admin = false;
+    private boolean admin = false;
     private String adminToken = "";
 
     @Builder
