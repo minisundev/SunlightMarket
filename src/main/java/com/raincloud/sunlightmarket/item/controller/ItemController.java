@@ -8,6 +8,7 @@ import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
 import com.raincloud.sunlightmarket.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,12 +49,13 @@ public class ItemController {
         return new ApiResponse<ItemResponseDto>(HttpStatus.OK.value(),"아이템 수정 성공했습니다",responseDto);
     }
 
-    @DeleteMapping("/items/{itemsId}")
-    public ResponseEntity<Void> deletePost(
-    @PathVariable Long itemId
+    @DeleteMapping("")
+    public ApiResponse<Void> deletePost(
+            @RequestParam Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
-        itemService.deletePost(itemId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        itemService.deletePost(id, userDetails.getUser());
+        return new ApiResponse<Void>(HttpStatus.OK.value(),"아이템 삭제 성공했습니다");
     }
 
     //선택 상품 조회
