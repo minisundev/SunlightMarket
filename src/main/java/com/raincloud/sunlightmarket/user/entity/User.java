@@ -2,7 +2,16 @@ package com.raincloud.sunlightmarket.user.entity;
 
 import com.raincloud.sunlightmarket.global.entity.Timestamped;
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,11 +20,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "User")
+@Table(name = "user")
 public class User extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column
@@ -36,6 +46,12 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRoleEnum role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+    Buyer buyer;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+    Seller seller;
 
     @Builder
     public User(final Long id, final Long kakaoId, final String nickname, final String password, final String email, final String intro, final UserRoleEnum role) {

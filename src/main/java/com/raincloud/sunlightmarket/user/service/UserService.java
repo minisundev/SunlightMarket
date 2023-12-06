@@ -3,13 +3,16 @@ package com.raincloud.sunlightmarket.user.service;
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
+import com.raincloud.sunlightmarket.user.entity.Buyer;
+import com.raincloud.sunlightmarket.user.entity.Seller;
 import com.raincloud.sunlightmarket.user.entity.User;
+import com.raincloud.sunlightmarket.user.repository.BuyerRepository;
+import com.raincloud.sunlightmarket.user.repository.SellerRepository;
 import com.raincloud.sunlightmarket.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +20,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BuyerRepository buyerRepository;
+    private final SellerRepository sellerRepository;
 
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
@@ -51,7 +56,19 @@ public class UserService {
                 .intro(singUpRequestDto.getIntro())
                 .role(roleEnum)
                 .build();
-        user = userRepository.save(user);
+        userRepository.save(user);
+
+        Buyer buyer = Buyer.builder()
+            .likes(0L)
+            .user(user)
+            .build();
+        buyerRepository.save(buyer);
+
+        Seller seller = Seller.builder()
+            .likes(0L)
+            .user(user)
+            .build();
+        sellerRepository.save(seller);
 
         return SignUpResponseDto.builder()
                 .id(user.getId())
