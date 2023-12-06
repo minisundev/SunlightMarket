@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class ItemResponseDto extends CommonResponseDto {
+public class ItemResponseDto {
     private Long seller_id;
     private String title;
     private String image;
@@ -28,10 +28,5 @@ public class ItemResponseDto extends CommonResponseDto {
         this.address = item.getAddress();
         this.created_at = item.getCreatedAt();
         this.modified_at = item.getModifiedAt();
-    }
-
-    public ItemResponseDto(String msg, Integer statuscode){
-        super(msg,statuscode);
-
     }
 }

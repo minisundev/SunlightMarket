@@ -10,10 +10,6 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class ItemAllResponseDto extends CommonResponseDto {
+public class ItemAllResponseDto {
     List<ItemResponseDto> itemResponseDtos;
-
-    public ItemAllResponseDto(String msg, Integer statuscode){
-        super(msg,statuscode);
-    }
 }
