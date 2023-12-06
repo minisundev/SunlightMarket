@@ -79,4 +79,12 @@ public class UserService {
                 .intro(loginUser.getIntro())
                 .build();
     }
+
+    public ProfileResponseDto getProfile(final User user) {
+        return ProfileResponseDto.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .intro(user.getIntro())
+                .build();
+    }
 }
