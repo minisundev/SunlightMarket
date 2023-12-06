@@ -7,6 +7,9 @@ import com.raincloud.sunlightmarket.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
@@ -17,5 +20,11 @@ public class ItemService {
         Item item = new Item(requestDto);
         Item saveItem = itemRepository.save(item);
         return new ItemResponseDto(item);
+    }
+
+    public List<ItemResponseDto> getAllItems() {
+        return itemRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(ItemResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
