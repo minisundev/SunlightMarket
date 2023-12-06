@@ -33,8 +33,8 @@ public class ItemController {
     }
 
 
-    //선택 상품 조회
-    @GetMapping("/get")
+    //전체 상품 조회
+    @GetMapping("")
     public ResponseEntity<ItemAllResponseDto> getItems(
             @RequestParam String type
     ) {
