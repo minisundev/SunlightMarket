@@ -32,6 +32,20 @@ public class ItemController {
         }
     }
 
+    //선택 상품 조회
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemResponseDto> getItem(
+            @PathVariable Long itemId
+    ) {
+        try {
+            ItemResponseDto responseDto = itemService.getItem(itemId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        }catch (RejectedExecutionException | IllegalArgumentException ex){
+            return ResponseEntity.badRequest().body(new ItemResponseDto(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+
+        }
+    }
+
 
     //전체 상품 조회
     @GetMapping("")

@@ -22,6 +22,11 @@ public class ItemService {
         return new ItemResponseDto(item);
     }
 
+    public ItemResponseDto getItem(Long itemId){
+        Item item = itemRepository.findById(itemId).orElse(null);
+        return new ItemResponseDto(item);
+    }
+
     public List<ItemResponseDto> getAllItems() {
         return itemRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(ItemResponseDto::new)
