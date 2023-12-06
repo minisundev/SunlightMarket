@@ -60,4 +60,9 @@ public class User extends Timestamped {
         this.kakaoId = kakaoId;
         return this;
     }
+
+    public void updateProfile(String nickname, String intro) {
+        this.nickname = nickname;
+        this.intro = intro;
+    }
 }
