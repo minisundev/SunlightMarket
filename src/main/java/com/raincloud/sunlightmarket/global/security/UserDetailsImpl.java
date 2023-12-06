@@ -3,6 +3,8 @@ package com.raincloud.sunlightmarket.global.security;
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import com.raincloud.sunlightmarket.user.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
