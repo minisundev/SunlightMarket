@@ -3,9 +3,9 @@ package com.raincloud.sunlightmarket.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
 import com.raincloud.sunlightmarket.global.security.UserDetailsImpl;
-import com.raincloud.sunlightmarket.user.dto.request.ProfileRequestDto;
+import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
-import com.raincloud.sunlightmarket.user.dto.response.ProfileResponseDto;
+import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
 import com.raincloud.sunlightmarket.user.service.KakaoService;
 import com.raincloud.sunlightmarket.user.service.UserService;
@@ -47,19 +47,19 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<ProfileResponseDto> updateProfile(
-            @RequestBody ProfileRequestDto requestDto,
+    public ResponseEntity<MyProfileResponseDto> updateProfile(
+            @RequestBody MyProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        ProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(), requestDto);
+        MyProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(), requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<ProfileResponseDto> myProfile(
+    public ResponseEntity<MyProfileResponseDto> myProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        ProfileResponseDto responseDto = userService.getProfile(userDetails.getUser());
+        MyProfileResponseDto responseDto = userService.getProfile(userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

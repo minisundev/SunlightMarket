@@ -1,9 +1,9 @@
 package com.raincloud.sunlightmarket.user.service;
 
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
-import com.raincloud.sunlightmarket.user.dto.request.ProfileRequestDto;
+import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
-import com.raincloud.sunlightmarket.user.dto.response.ProfileResponseDto;
+import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
 import com.raincloud.sunlightmarket.user.entity.User;
 import com.raincloud.sunlightmarket.user.repository.UserRepository;
@@ -64,24 +64,24 @@ public class UserService {
     }
 
     @Transactional
-    public ProfileResponseDto updateProfile(final User user, final ProfileRequestDto profileRequestDto) {
-        Optional<User> findUser = userRepository.findByNickname(profileRequestDto.getNickname());
+    public MyProfileResponseDto updateProfile(final User user, final MyProfileRequestDto myProfileRequestDto) {
+        Optional<User> findUser = userRepository.findByNickname(myProfileRequestDto.getNickname());
         if (findUser.isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 닉네임 입니다.");
         }
 
         User loginUser = userRepository.findById(user.getId()).orElseThrow();
-        loginUser.updateProfile(profileRequestDto.getNickname(), profileRequestDto.getIntro());
+        loginUser.updateProfile(myProfileRequestDto.getNickname(), myProfileRequestDto.getIntro());
 
-        return ProfileResponseDto.builder()
+        return MyProfileResponseDto.builder()
                 .email(loginUser.getEmail())
                 .nickname(loginUser.getNickname())
                 .intro(loginUser.getIntro())
                 .build();
     }
 
-    public ProfileResponseDto getProfile(final User user) {
-        return ProfileResponseDto.builder()
+    public MyProfileResponseDto getProfile(final User user) {
+        return MyProfileResponseDto.builder()
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .intro(user.getIntro())

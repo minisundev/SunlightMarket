@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileRequestDto {
+public class MyProfileRequestDto {
 
     private String nickname;
     private String intro;
