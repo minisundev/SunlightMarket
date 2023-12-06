@@ -49,5 +49,7 @@ public class Item extends Timestamped {
         completed = false;
         delivered = false;
     }
-
+public void updateTitle(String title) {
+        this.title = title;
+}
 }
