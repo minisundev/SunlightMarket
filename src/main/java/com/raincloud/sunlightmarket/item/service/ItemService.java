@@ -36,8 +36,8 @@ public class ItemService {
         return new ItemResponseDto(findItem);
     }
 
-    public void deletePost(Long itemId) {
-        Item finditem = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
+    public void deletePost(Long itemId, User user) {
+        Item finditem = getUserItem(itemId,user);
         itemRepository.delete(finditem);
     }
 
