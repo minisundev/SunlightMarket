@@ -18,8 +18,8 @@ public class User extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long kakao_id;
+    @Column
+    private Long kakaoId;
 
     @Column(nullable = false)
     private String nickname;
@@ -38,9 +38,9 @@ public class User extends Timestamped {
     private UserRoleEnum role;
 
     @Builder
-    public User(final Long id, final Long kakao_id, final String nickname, final String password, final String email, final String intro, final UserRoleEnum role) {
+    public User(final Long id, final Long kakaoId, final String nickname, final String password, final String email, final String intro, final UserRoleEnum role) {
         this.id = id;
-        this.kakao_id = kakao_id;
+        this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
@@ -48,16 +48,16 @@ public class User extends Timestamped {
         this.role = role;
     }
 
-    public User(Long kakao_id, String nickname, String password, String email, UserRoleEnum role) {
-        this.kakao_id = kakao_id;
+    public User(Long kakaoId, String nickname, String password, String email, UserRoleEnum role) {
+        this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.role = role;
     }
 
-    public User kakaoIdUpdate(Long kakao_id) {
-        this.kakao_id = kakao_id;
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
         return this;
     }
 }

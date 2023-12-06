@@ -47,7 +47,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    JwtAuthentizationFilter jwtAuthentizationFilter() {
+    public JwtAuthentizationFilter jwtAuthentizationFilter() {
         return new JwtAuthentizationFilter(jwtUtil, userDetailsService);
     }
 
