@@ -2,7 +2,7 @@ package com.raincloud.sunlightmarket.global.config;
 
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
 import com.raincloud.sunlightmarket.global.security.JwtAuthenticationFilter;
-import com.raincloud.sunlightmarket.global.security.JwtAuthentizationFilter;
+import com.raincloud.sunlightmarket.global.security.JwtAuthorizationFilter;
 import com.raincloud.sunlightmarket.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -47,8 +47,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public JwtAuthentizationFilter jwtAuthentizationFilter() {
-        return new JwtAuthentizationFilter(jwtUtil, userDetailsService);
+    public JwtAuthorizationFilter jwtAuthentizationFilter() {
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 
     @Bean
