@@ -4,6 +4,7 @@ import com.raincloud.sunlightmarket.global.dto.ApiResponse;
 import com.raincloud.sunlightmarket.item.dto.ItemAllResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemRequestDto;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
+import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
 import com.raincloud.sunlightmarket.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,14 +24,31 @@ public class ItemController {
     @PostMapping("/add")
     public ApiResponse<ItemResponseDto> addItem(
             @RequestBody ItemRequestDto requestDto
+
     ) {
         try {
             ItemResponseDto responseDto = itemService.addItem(requestDto);
-             ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
             return new ApiResponse<ItemResponseDto>(HttpStatus.CREATED.value(),"아이템 추가 성공했습니다",responseDto);
         }catch (RejectedExecutionException | IllegalArgumentException ex){
             return new ApiResponse<ItemResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
+    }
+
+
+    @PutMapping("/items/{itemsId)")
+    public ResponseEntity<Void> updatePost(
+        @PathVariable Long itemId,
+        @RequestBody ItemUpdateRequest request
+    ) {
+        itemService.updateItem(itemId, request.getTitle());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    @DeleteMapping("/items/{itemsId}")
+    public ResponseEntity<Void> deletePost(
+    @PathVariable Long itemId
+    ){
+        itemService.deletePost(itemId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     //선택 상품 조회
@@ -66,4 +84,5 @@ public class ItemController {
             return new ApiResponse<ItemAllResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
     }
+
 }
