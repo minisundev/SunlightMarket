@@ -28,6 +28,11 @@ public class ItemService {
         Item findItem = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
         findItem.updateTitle(title);
     }
-}
 
+
+    public void deletePost(Long itemId) {
+        Item finditem = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
+        itemRepository.delete(finditem);
+    }
+        }
 

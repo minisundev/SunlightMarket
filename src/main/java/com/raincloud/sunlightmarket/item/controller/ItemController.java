@@ -39,6 +39,13 @@ public class ItemController {
         itemService.updateItem(itemId, request.getTitle());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+    @DeleteMapping("/items/{itemsId}")
+    public ResponseEntity<Void> deletePost(
+    @PathVariable Long itemId
+    ){
+        itemService.deletePost(itemId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
 
 
