@@ -20,7 +20,7 @@ import java.util.List;
 public class Item extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
+    @Column
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,7 +49,6 @@ public class Item extends Timestamped {
     private Boolean delivered;
 
     @OneToMany(mappedBy = "item",cascade = CascadeType.PERSIST,orphanRemoval = true)
-    @JoinColumn(name = "item_id")
     private List<Order> orders;
 
     public Item(ItemRequestDto requestDto, Seller seller){
