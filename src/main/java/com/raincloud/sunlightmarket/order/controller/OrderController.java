@@ -1,9 +1,11 @@
 package com.raincloud.sunlightmarket.order.controller;
 
 import com.raincloud.sunlightmarket.global.dto.ApiResponse;
+import com.raincloud.sunlightmarket.global.dto.DoubleResponse;
 import com.raincloud.sunlightmarket.global.security.UserDetailsImpl;
 import com.raincloud.sunlightmarket.order.dto.OrderRequestDto;
 import com.raincloud.sunlightmarket.order.dto.OrderResponseDto;
+import com.raincloud.sunlightmarket.order.dto.PublicOrderResponseDto;
 import com.raincloud.sunlightmarket.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,14 +37,27 @@ public class OrderController {
         }
     }
     @GetMapping("/read")
-    public ApiResponse<List<OrderResponseDto>> getOrdersForAll(
+    public ApiResponse<List<PublicOrderResponseDto>> getOrdersForAll(
             @RequestParam Long itemId
     ) {
         try {
-            List<OrderResponseDto> responseDto = orderService.getOrders(itemId);
-            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDto);
+            List<PublicOrderResponseDto> responseDto = orderService.getOrders(itemId);
+            return new ApiResponse<List<PublicOrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDto);
         }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+            return new ApiResponse<List<PublicOrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+        }
+    }
+
+    @GetMapping("")
+    public ApiResponse<DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>>> getOrdersForUsers(
+            @RequestParam Long itemId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        try {
+            DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>> responseDto = orderService.getOrdersForUsers(itemId, userDetails.getUser());
+            return new ApiResponse<DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDto);
+        }catch (RejectedExecutionException | NullPointerException ex){
+            return new ApiResponse<DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
     }
 
