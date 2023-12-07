@@ -59,4 +59,17 @@ public class OrderController {
             return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
     }
+
+    @DeleteMapping("")
+    public ApiResponse<OrderResponseDto> deleteOrder(
+            @RequestParam Long orderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        try {
+            OrderResponseDto responseDto = orderService.deleteOrder(orderId,userDetails.getUser());
+            return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 삭제 성공했습니다",responseDto);
+        }catch (RejectedExecutionException | NullPointerException ex){
+            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+        }
+    }
 }
