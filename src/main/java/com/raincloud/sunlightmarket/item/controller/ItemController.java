@@ -59,6 +59,7 @@ public class ItemController {
     }
 
     //선택 상품 조회
+
     @GetMapping("/read/{itemId}")
     public ApiResponse<ItemResponseDto> getItem(
             @PathVariable Long itemId

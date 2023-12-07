@@ -33,7 +33,6 @@ public class ItemService {
         return new ItemResponseDto(item);
     }
 
-
     @Transactional
     public ItemResponseDto updateItem(Long itemId, ItemUpdateRequest request, User user) {
         Item findItem = getUserItem(itemId, user);
@@ -47,7 +46,7 @@ public class ItemService {
     }
 
     public ItemResponseDto getItem(Long itemId){
-        Item item = itemRepository.findById(itemId).orElse(null);
+        Item item = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
         return new ItemResponseDto(item);
     }
 
@@ -65,7 +64,6 @@ public class ItemService {
         }
         return item;
     }
-
 
     private Seller getSellerByUser(User user){
         Seller seller = sellerRepository.findByUserId(user.getId()).orElseThrow(NullPointerException::new);
