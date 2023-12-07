@@ -42,4 +42,9 @@ public class Order extends Timestamped {
         this.orderStatus = "PENDING";
         this.price = requestDto.getPrice();
     }
+
+    public void update(OrderRequestDto requestDto){
+        this.address = requestDto.getAddress();
+        this.price = requestDto.getPrice();
+    }
 }

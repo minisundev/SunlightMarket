@@ -14,6 +14,7 @@ import com.raincloud.sunlightmarket.user.repository.BuyerRepository;
 import com.raincloud.sunlightmarket.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
@@ -38,22 +39,32 @@ public class OrderService {
     }
 
     public List<OrderResponseDto> getOrders(Long itemId){
-        return orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 주문요청을 찾을 수 없습니다."))
+        return orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."))
                 .stream()
                 .map(OrderResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    private Item getItemById(Long itemId){
-         Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
-        return item;
+    @Transactional
+    public OrderResponseDto updateOrder(OrderRequestDto requestDto, Long orderId, User user){
+        Order order = getUserOrderById(orderId,user);
+        order.update(requestDto);
+        return new OrderResponseDto(order);
+    }
+
+    private Order getUserOrderById(Long orderId,User user){
+        Order order = orderRepository.findById(orderId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
+        if(!order.getBuyer().getUser().getId().equals(user.getId())){
+            throw new RejectedExecutionException("작성자만 구매요청을 수정할 수 있습니다.");
+        }
+        return order;
     }
 
     private Item getNotUserItemById(Long itemId, User user){
         Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
         User userFound = item.getSeller().getUser();
         if(userFound.getId().equals(user.getId())){
-            throw new RejectedExecutionException("작성자는 구매 요청을 할 수 없습니다.");
+            throw new RejectedExecutionException("작성자는 구매요청을 할 수 없습니다.");
         }
         return item;
     }
