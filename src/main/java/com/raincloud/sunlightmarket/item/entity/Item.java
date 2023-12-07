@@ -3,12 +3,15 @@ package com.raincloud.sunlightmarket.item.entity;
 import com.raincloud.sunlightmarket.global.entity.Timestamped;
 import com.raincloud.sunlightmarket.item.dto.ItemRequestDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
+import com.raincloud.sunlightmarket.order.entity.Order;
 import com.raincloud.sunlightmarket.user.entity.Seller;
 import com.raincloud.sunlightmarket.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -17,6 +20,7 @@ import lombok.Setter;
 public class Item extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +48,10 @@ public class Item extends Timestamped {
     @Column
     private Boolean delivered;
 
+    @OneToMany(mappedBy = "item",cascade = CascadeType.PERSIST,orphanRemoval = true)
+    @JoinColumn(name = "item_id")
+    private List<Order> orders;
+
     public Item(ItemRequestDto requestDto, Seller seller){
         this.seller = seller;
         title = requestDto.getTitle();
@@ -54,11 +62,11 @@ public class Item extends Timestamped {
         completed = false;
         delivered = false;
     }
-public void update(ItemUpdateRequest requestDto) {
-    title = requestDto.getTitle();
-    image = requestDto.getImage();
-    price = requestDto.getPrice();
-    content = requestDto.getContent();
-    address = requestDto.getAddress();
+    public void update(ItemUpdateRequest requestDto) {
+        title = requestDto.getTitle();
+        image = requestDto.getImage();
+        price = requestDto.getPrice();
+        content = requestDto.getContent();
+        address = requestDto.getAddress();
     }
 }
