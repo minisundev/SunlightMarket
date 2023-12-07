@@ -11,5 +11,6 @@ import lombok.RequiredArgsConstructor;
 public class OrderRequestDto {
 
     private String address;
+    private String price;
 
 }
