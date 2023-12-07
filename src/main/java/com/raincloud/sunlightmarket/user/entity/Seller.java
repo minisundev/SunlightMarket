@@ -1,17 +1,13 @@
 package com.raincloud.sunlightmarket.user.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import com.raincloud.sunlightmarket.item.entity.Item;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,10 +29,14 @@ public class Seller {
     @Column
     private String nickname;
 
+    @OneToMany(mappedBy = "item")
+    private List<Item> items = new ArrayList<>();
+
     @Builder
     public Seller(Long likes, User user) {
         this.likes = likes;
         this.user = user;
         this.nickname = user.getNickname();
     }
+
 }

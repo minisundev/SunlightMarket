@@ -7,6 +7,7 @@ import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
 import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
+import com.raincloud.sunlightmarket.user.dto.response.UserProfileResponseDto;
 import com.raincloud.sunlightmarket.user.service.KakaoService;
 import com.raincloud.sunlightmarket.user.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -60,6 +61,14 @@ public class UserController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         MyProfileResponseDto responseDto = userService.getProfile(userDetails.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<UserProfileResponseDto> userProfile(
+            @PathVariable Long userId
+    ) {
+        UserProfileResponseDto responseDto = userService.getUserProfile(userId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
