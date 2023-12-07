@@ -1,5 +1,6 @@
 package com.raincloud.sunlightmarket.order.service;
 
+import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.item.repository.ItemRepository;
 import com.raincloud.sunlightmarket.order.dto.OrderRequestDto;
@@ -14,7 +15,9 @@ import com.raincloud.sunlightmarket.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,13 @@ public class OrderService {
         Order order = new Order(requestDto,item,buyer);
         orderRepository.save(order);
         return new OrderResponseDto(order);
+    }
+
+    public List<OrderResponseDto> getOrders(Long itemId){
+        return orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 주문요청을 찾을 수 없습니다."))
+                .stream()
+                .map(OrderResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     private Item getItemById(Long itemId){

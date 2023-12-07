@@ -14,6 +14,8 @@ public class OrderResponseDto {
 
     private String address;
 
+    private String price;
+
     private String orderStatus;
 
 
@@ -21,5 +23,6 @@ public class OrderResponseDto {
         buyerName = order.getBuyer().getNickname();
         address = order.getAddress();
         orderStatus = order.getOrderStatus();
+        price = order.getPrice();
     }
 }
