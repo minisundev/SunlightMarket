@@ -2,6 +2,7 @@ package com.raincloud.sunlightmarket.review.toseller.service;
 
 import com.raincloud.sunlightmarket.review.toseller.dto.request.ReviewToSellerRequestDto;
 import com.raincloud.sunlightmarket.review.toseller.dto.response.CreateReviewToSellerResponseDto;
+import com.raincloud.sunlightmarket.review.toseller.dto.response.UpdateReviewToSellerResponseDto;
 import com.raincloud.sunlightmarket.review.toseller.entity.ReviewToSeller;
 import com.raincloud.sunlightmarket.review.toseller.repository.ReviewToSellerRepository;
 import com.raincloud.sunlightmarket.user.entity.Seller;
@@ -13,13 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ReviewToSellerService {
 
     private final ReviewToSellerRepository reviewToSellerRepository;
     private final SellerRepository sellerRepository;
 
-    @Transactional
     public CreateReviewToSellerResponseDto createReview(
         Long sellerId, User user, ReviewToSellerRequestDto requestDto) {
 
@@ -34,10 +34,40 @@ public class ReviewToSellerService {
         return new CreateReviewToSellerResponseDto(review);
     }
 
+    public UpdateReviewToSellerResponseDto updateReview(
+        Long sellerId, Long reviewId, User user, ReviewToSellerRequestDto requestDto) {
+
+        checkedSeller(sellerId);
+        ReviewToSeller review = checkedReview(reviewId);
+        checkedUser(review, user.getEmail());
+
+        review.update(requestDto);
+        return new UpdateReviewToSellerResponseDto(review);
+    }
+
+    public void deleteReview(Long sellerId, Long reviewId, User user) {
+        checkedSeller(sellerId);
+        ReviewToSeller review = checkedReview(reviewId);
+        checkedUser(review, user.getEmail());
+        reviewToSellerRepository.delete(review);
+    }
+
     //////////////////////////////////////////////////////////////////////
     private Seller checkedSeller(Long sellerId) {
         return sellerRepository.findById(sellerId).orElseThrow(
             () -> new NullPointerException("판매자 정보가 존재하지 않습니다."));
     }
+
+    private ReviewToSeller checkedReview(Long reivewId) {
+        return reviewToSellerRepository.findById(reivewId).orElseThrow(
+            () -> new NullPointerException("리뷰 정보가 존재하지 않습니다."));
+    }
+
+    private void checkedUser(ReviewToSeller review, String nickname) {
+        if (review.getUser().getNickname().equals(nickname)) {
+            throw new IllegalArgumentException("회원정보가 일치하지 않습니다.");
+        }
+    }
+
     //////////////////////////////////////////////////////////////////////
 }

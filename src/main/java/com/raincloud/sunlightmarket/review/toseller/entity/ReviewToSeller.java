@@ -1,6 +1,7 @@
 package com.raincloud.sunlightmarket.review.toseller.entity;
 
 import com.raincloud.sunlightmarket.global.entity.Timestamped;
+import com.raincloud.sunlightmarket.review.toseller.dto.request.ReviewToSellerRequestDto;
 import com.raincloud.sunlightmarket.user.entity.Seller;
 import com.raincloud.sunlightmarket.user.entity.User;
 import jakarta.persistence.Entity;
@@ -43,5 +44,10 @@ public class ReviewToSeller extends Timestamped {
         this.liked = liked;
         this.user = user;
         this.seller = seller;
+    }
+
+    public void update(ReviewToSellerRequestDto requestDto) {
+        this.comment = requestDto.getComment();
+
     }
 }
