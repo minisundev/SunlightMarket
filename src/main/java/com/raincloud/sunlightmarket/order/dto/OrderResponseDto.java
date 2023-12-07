@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class OrderResponseDto {
+
+    private Long orderId;
     private String buyerName;
 
     private String address;
@@ -20,9 +22,12 @@ public class OrderResponseDto {
 
 
     public OrderResponseDto(Order order){
+
+        orderId = order.getId();
         buyerName = order.getBuyer().getNickname();
         address = order.getAddress();
         orderStatus = order.getOrderStatus();
         price = order.getPrice();
+
     }
 }
