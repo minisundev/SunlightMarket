@@ -30,10 +30,13 @@ public class Seller {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column
+    private String nickname;
+
     @Builder
     public Seller(Long likes, User user) {
         this.likes = likes;
         this.user = user;
+        this.nickname = user.getNickname();
     }
-
 }
