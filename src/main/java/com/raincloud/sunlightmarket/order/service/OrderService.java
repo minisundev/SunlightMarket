@@ -28,19 +28,19 @@ public class OrderService {
     public OrderResponseDto addOrder(OrderRequestDto requestDto, Long itemId , User user)
     {
         Item item  = getNotUserItemById(itemId,user);
-        Buyer buyer = getBuyerByUser(user);
+        Buyer buyer = user.getBuyer();
         Order order = new Order(requestDto,item,buyer);
         orderRepository.save(order);
         return new OrderResponseDto(order);
     }
 
     private Item getItemById(Long itemId){
-         Item item = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
+         Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
         return item;
     }
 
     private Item getNotUserItemById(Long itemId, User user){
-        Item item = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
         User userFound = item.getSeller().getUser();
         if(userFound.getId().equals(user.getId())){
             throw new RejectedExecutionException("작성자는 구매 요청을 할 수 없습니다.");
@@ -48,8 +48,4 @@ public class OrderService {
         return item;
     }
 
-    private Buyer getBuyerByUser(User user){
-        Buyer buyer = buyerRepository.findByUserId(user.getId()).orElseThrow(NullPointerException::new);
-        return buyer;
-    }
 }

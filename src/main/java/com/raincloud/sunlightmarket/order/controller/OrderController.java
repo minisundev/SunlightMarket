@@ -29,7 +29,7 @@ public class OrderController {
         try {
             OrderResponseDto responseDto = orderService.addOrder(requestDto,itemId, userDetails.getUser());
             return new ApiResponse<OrderResponseDto>(HttpStatus.CREATED.value(),"구매 요청 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | IllegalArgumentException ex){
+        }catch (RejectedExecutionException | NullPointerException ex){
             return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
     }
