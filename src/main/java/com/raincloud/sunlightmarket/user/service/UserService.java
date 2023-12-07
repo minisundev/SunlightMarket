@@ -2,6 +2,7 @@ package com.raincloud.sunlightmarket.user.service;
 
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
+import com.raincloud.sunlightmarket.review.toseller.dto.response.CreateReviewToSellerResponseDto;
 import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
 import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
@@ -126,12 +127,18 @@ public class UserService {
                 .map(ItemResponseDto::new)
                 .toList();
 
+        List<CreateReviewToSellerResponseDto> reviews = seller.getReviews()
+                .stream()
+                .map(CreateReviewToSellerResponseDto::new)
+                .toList();
+
         return UserProfileResponseDto.builder()
                 .id(seller.getId())
                 .nickname(seller.getNickname())
                 .intro(user.getIntro())
                 .likes(seller.getLikes())
                 .items(items)
+                .reviews(reviews)
                 .build();
     }
 }
