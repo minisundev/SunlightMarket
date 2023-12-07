@@ -1,6 +1,7 @@
 package com.raincloud.sunlightmarket.user.entity;
 
 import com.raincloud.sunlightmarket.item.entity.Item;
+import com.raincloud.sunlightmarket.review.toseller.entity.ReviewToSeller;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,9 @@ public class Seller {
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.REMOVE)
     private List<Item> items = new ArrayList<>();
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.REMOVE)
+    private List<ReviewToSeller> reviews = new ArrayList<>();
 
     @Builder
     public Seller(Long likes, User user) {
