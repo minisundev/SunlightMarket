@@ -1,9 +1,11 @@
 package com.raincloud.sunlightmarket.order.repository;
 
-import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.order.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+import java.util.List;
+import java.util.Optional;
 
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    Optional<List<Order>> findAllByItemId(Long itemId);
 }

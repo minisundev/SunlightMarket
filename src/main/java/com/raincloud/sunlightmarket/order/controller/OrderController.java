@@ -4,12 +4,14 @@ import com.raincloud.sunlightmarket.global.dto.ApiResponse;
 import com.raincloud.sunlightmarket.global.security.UserDetailsImpl;
 import com.raincloud.sunlightmarket.order.dto.OrderRequestDto;
 import com.raincloud.sunlightmarket.order.dto.OrderResponseDto;
+import com.raincloud.sunlightmarket.order.dto.OrdersResponseForAll;
 import com.raincloud.sunlightmarket.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
@@ -31,6 +33,17 @@ public class OrderController {
             return new ApiResponse<OrderResponseDto>(HttpStatus.CREATED.value(),"구매 요청 성공했습니다",responseDto);
         }catch (RejectedExecutionException | NullPointerException ex){
             return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+        }
+    }
+    @GetMapping("/read")
+    public ApiResponse<List<OrderResponseDto>> getOrdersForAll(
+            @RequestParam Long itemId
+    ) {
+        try {
+            List<OrderResponseDto> responseDto = orderService.getOrders(itemId);
+            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 성공했습니다",responseDto);
+        }catch (RejectedExecutionException | NullPointerException ex){
+            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
     }
 }

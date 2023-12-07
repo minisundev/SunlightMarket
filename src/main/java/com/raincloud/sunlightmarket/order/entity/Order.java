@@ -33,10 +33,13 @@ public class Order extends Timestamped {
 
     private String orderStatus;
 
+    private String price;
+
     public Order(OrderRequestDto requestDto, Item item, Buyer buyer){
         this.item = item;
         this.buyer = buyer;
         this.address = requestDto.getAddress();
         this.orderStatus = "PENDING";
+        this.price = requestDto.getPrice();
     }
 }
