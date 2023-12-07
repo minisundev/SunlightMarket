@@ -48,6 +48,12 @@ public class ReviewToSeller extends Timestamped {
 
     public void update(ReviewToSellerRequestDto requestDto) {
         this.comment = requestDto.getComment();
-
     }
+
+    public Boolean clickLike() {
+        this.liked = !liked;
+        return this.liked;
+    }
+
+
 }
