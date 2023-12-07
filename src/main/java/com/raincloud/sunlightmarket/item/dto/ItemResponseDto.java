@@ -21,7 +21,7 @@ public class ItemResponseDto{
 
     public ItemResponseDto(Item item) {
         this.title = item.getTitle();
-        this.nickname = item.getUser().getNickname();
+        this.nickname = item.getSeller().getNickname();
         this.content = item.getContent();
         this.image = item.getImage();
         this.price = item.getPrice();

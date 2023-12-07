@@ -6,7 +6,10 @@ import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
 import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.item.repository.ItemRepository;
+import com.raincloud.sunlightmarket.user.entity.Seller;
 import com.raincloud.sunlightmarket.user.entity.User;
+import com.raincloud.sunlightmarket.user.repository.SellerRepository;
+import com.raincloud.sunlightmarket.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,9 +24,11 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final SellerRepository sellerRepository;
 
     public ItemResponseDto addItem(ItemRequestDto requestDto, User user) {
-        Item item = new Item(requestDto,user);
+        Seller seller = getSellerByUser(user);
+        Item item = new Item(requestDto,seller);
         itemRepository.save(item);
         return new ItemResponseDto(item);
     }
@@ -54,10 +59,17 @@ public class ItemService {
 
     private Item getUserItem(Long itemId, User user){
         Item item = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
-        if(!item.getUser().getId().equals(user.getId())){
+        Seller seller = getSellerByUser(user);
+        if(!item.getSeller().getId().equals(seller.getId())){
             throw new RejectedExecutionException("작성자만 수정할 수 있습니다.");
         }
         return item;
+    }
+
+
+    private Seller getSellerByUser(User user){
+        Seller seller = sellerRepository.findByUserId(user.getId()).orElseThrow(NullPointerException::new);
+        return seller;
     }
 }
 
