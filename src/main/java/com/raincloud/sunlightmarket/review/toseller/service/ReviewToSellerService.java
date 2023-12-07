@@ -45,6 +45,19 @@ public class ReviewToSellerService {
         return new UpdateReviewToSellerResponseDto(review);
     }
 
+    public String clickLike(Long sellerId, Long reviewId, User user) {
+        Seller seller = checkedSeller(sellerId);
+        ReviewToSeller review = checkedReview(reviewId);
+        checkedUser(review, user.getEmail());
+
+        review.clickLike();
+        seller.updateLikeCnt(review.getLiked());
+        if (review.getLiked()) {
+            return "좋아요가 등록 되었습니다";
+        }
+        return "좋아요가 취소 되었습니다.";
+    }
+
     public void deleteReview(Long sellerId, Long reviewId, User user) {
         checkedSeller(sellerId);
         ReviewToSeller review = checkedReview(reviewId);

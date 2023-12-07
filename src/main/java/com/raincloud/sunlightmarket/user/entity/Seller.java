@@ -43,4 +43,12 @@ public class Seller {
         this.nickname = user.getNickname();
     }
 
+    public void updateLikeCnt(Boolean liked) {
+        if (liked) {
+            this.likes++;
+        } else {
+            this.likes--;
+        }
+    }
+
 }
