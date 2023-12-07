@@ -26,6 +26,9 @@ public class Buyer {
 
     private Long likes;
 
+    @Column
+    private String nickname;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -34,6 +37,7 @@ public class Buyer {
     public Buyer(Long likes, User user) {
         this.likes = likes;
         this.user = user;
+        this.nickname = user.getNickname();
     }
 
 }
