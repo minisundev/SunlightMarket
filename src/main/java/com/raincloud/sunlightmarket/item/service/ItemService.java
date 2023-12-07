@@ -51,7 +51,7 @@ public class ItemService {
     }
 
     public List<ItemResponseDto> getAllItems() {
-        return itemRepository.findAllByOrderByCreatedAtDesc().stream()
+        return itemRepository.findAllByOrderByModifiedAtDesc().stream()
                 .map(ItemResponseDto::new)
                 .collect(Collectors.toList());
     }
