@@ -65,6 +65,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/api/users/**").permitAll()
                     .requestMatchers("/api/items/read/**").permitAll()
+                    .requestMatchers("/api/orders/read/**").permitAll()
                 .anyRequest().authenticated());
 
         httpSecurity
