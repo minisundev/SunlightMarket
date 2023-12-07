@@ -3,6 +3,7 @@ package com.raincloud.sunlightmarket.item.entity;
 import com.raincloud.sunlightmarket.global.entity.Timestamped;
 import com.raincloud.sunlightmarket.item.dto.ItemRequestDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
+import com.raincloud.sunlightmarket.user.entity.Seller;
 import com.raincloud.sunlightmarket.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,8 +20,8 @@ public class Item extends Timestamped {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
     @Column
     private String title;
@@ -43,8 +44,8 @@ public class Item extends Timestamped {
     @Column
     private Boolean delivered;
 
-    public Item(ItemRequestDto requestDto, User user){
-        this.user = user;
+    public Item(ItemRequestDto requestDto, Seller seller){
+        this.seller = seller;
         title = requestDto.getTitle();
         image = requestDto.getImage();
         price = requestDto.getPrice();
