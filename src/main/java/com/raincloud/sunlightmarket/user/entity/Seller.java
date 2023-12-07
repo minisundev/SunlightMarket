@@ -29,7 +29,7 @@ public class Seller {
     @Column
     private String nickname;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.REMOVE)
     private List<Item> items = new ArrayList<>();
 
     @Builder
