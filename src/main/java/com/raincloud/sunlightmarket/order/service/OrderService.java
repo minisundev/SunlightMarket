@@ -1,10 +1,12 @@
 package com.raincloud.sunlightmarket.order.service;
 
+import com.raincloud.sunlightmarket.global.dto.DoubleResponse;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.item.repository.ItemRepository;
 import com.raincloud.sunlightmarket.order.dto.OrderRequestDto;
 import com.raincloud.sunlightmarket.order.dto.OrderResponseDto;
+import com.raincloud.sunlightmarket.order.dto.PublicOrderResponseDto;
 import com.raincloud.sunlightmarket.order.entity.Order;
 import com.raincloud.sunlightmarket.order.repository.OrderRepository;
 import com.raincloud.sunlightmarket.user.entity.Buyer;
@@ -38,11 +40,27 @@ public class OrderService {
         return new OrderResponseDto(order);
     }
 
-    public List<OrderResponseDto> getOrders(Long itemId){
+    public List<PublicOrderResponseDto> getOrders(Long itemId){
         return orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."))
                 .stream()
-                .map(OrderResponseDto::new)
+                .map(PublicOrderResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>> getOrdersForUsers(Long itemId, User user){
+        List<Order> orders = orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
+        List<OrderResponseDto> orderDtos = null;
+        List<PublicOrderResponseDto> publicOrderDtos = null;
+        if(orders.get(0).getItem().getSeller().getId().equals(user.getSeller().getId())){//Item의 작성자가 볼때는 orderId와 address가 포함된 response리턴
+            orderDtos = orders.stream()
+                    .map(OrderResponseDto::new)
+                    .collect(Collectors.toList());
+        }else {//Item의 작성자가 아닌 유저가 볼때는 orderId와 address가 제외된 response리턴
+            publicOrderDtos = orders.stream()
+                    .map(PublicOrderResponseDto::new)
+                    .collect(Collectors.toList());
+        }
+        return new DoubleResponse(orderDtos,publicOrderDtos);
     }
 
     @Transactional
