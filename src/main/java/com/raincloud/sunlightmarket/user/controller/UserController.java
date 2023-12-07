@@ -3,10 +3,11 @@ package com.raincloud.sunlightmarket.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
 import com.raincloud.sunlightmarket.global.security.UserDetailsImpl;
-import com.raincloud.sunlightmarket.user.dto.request.ProfileRequestDto;
+import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
-import com.raincloud.sunlightmarket.user.dto.response.ProfileResponseDto;
+import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
+import com.raincloud.sunlightmarket.user.dto.response.UserProfileResponseDto;
 import com.raincloud.sunlightmarket.user.service.KakaoService;
 import com.raincloud.sunlightmarket.user.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -47,11 +48,27 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<ProfileResponseDto> updateProfile(
-            @RequestBody ProfileRequestDto requestDto,
+    public ResponseEntity<MyProfileResponseDto> updateProfile(
+            @RequestBody MyProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        ProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(), requestDto);
+        MyProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(), requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<MyProfileResponseDto> myProfile(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        MyProfileResponseDto responseDto = userService.getProfile(userDetails.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<UserProfileResponseDto> userProfile(
+            @PathVariable Long userId
+    ) {
+        UserProfileResponseDto responseDto = userService.getUserProfile(userId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }

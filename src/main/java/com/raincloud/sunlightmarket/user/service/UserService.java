@@ -1,21 +1,25 @@
 package com.raincloud.sunlightmarket.user.service;
 
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
-import com.raincloud.sunlightmarket.user.dto.request.ProfileRequestDto;
+import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
+import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
-import com.raincloud.sunlightmarket.user.dto.response.ProfileResponseDto;
+import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
+import com.raincloud.sunlightmarket.user.dto.response.UserProfileResponseDto;
 import com.raincloud.sunlightmarket.user.entity.Buyer;
 import com.raincloud.sunlightmarket.user.entity.Seller;
 import com.raincloud.sunlightmarket.user.entity.User;
 import com.raincloud.sunlightmarket.user.repository.BuyerRepository;
 import com.raincloud.sunlightmarket.user.repository.SellerRepository;
 import com.raincloud.sunlightmarket.user.repository.UserRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,19 +85,53 @@ public class UserService {
     }
 
     @Transactional
-    public ProfileResponseDto updateProfile(final User user, final ProfileRequestDto profileRequestDto) {
-        Optional<User> findUser = userRepository.findByNickname(profileRequestDto.getNickname());
+    public MyProfileResponseDto updateProfile(final User user, final MyProfileRequestDto myProfileRequestDto) {
+        Optional<User> findUser = userRepository.findByNickname(myProfileRequestDto.getNickname());
         if (findUser.isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 닉네임 입니다.");
         }
 
-        User loginUser = userRepository.findById(user.getId()).orElseThrow();
-        loginUser.updateProfile(profileRequestDto.getNickname(), profileRequestDto.getIntro());
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(
+                () -> new IllegalArgumentException("해당 유자를 찾을 수 없습니다.")
+        );
+        loginUser.updateProfile(myProfileRequestDto.getNickname(), myProfileRequestDto.getIntro());
 
-        return ProfileResponseDto.builder()
+        return MyProfileResponseDto.builder()
                 .email(loginUser.getEmail())
                 .nickname(loginUser.getNickname())
                 .intro(loginUser.getIntro())
+                .build();
+    }
+
+    public MyProfileResponseDto getProfile(final User user) {
+        return MyProfileResponseDto.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .intro(user.getIntro())
+                .build();
+    }
+
+    @Transactional
+    public UserProfileResponseDto getUserProfile(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
+        );
+
+        Seller seller = sellerRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("해당 판매자를 찾을 수 없습니다.")
+        );
+
+        List<ItemResponseDto> items = seller.getItems()
+                .stream()
+                .map(ItemResponseDto::new)
+                .toList();
+
+        return UserProfileResponseDto.builder()
+                .id(seller.getId())
+                .nickname(seller.getNickname())
+                .intro(user.getIntro())
+                .likes(seller.getLikes())
+                .items(items)
                 .build();
     }
 }
