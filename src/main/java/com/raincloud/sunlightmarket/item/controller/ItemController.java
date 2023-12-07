@@ -59,7 +59,7 @@ public class ItemController {
     }
 
     //선택 상품 조회
-    @GetMapping("/{itemId}")
+    @GetMapping("read/{itemId}")
     public ApiResponse<ItemResponseDto> getItem(
             @PathVariable Long itemId
     ) {
@@ -72,7 +72,7 @@ public class ItemController {
     }
 
     //전체 상품 조회
-    @GetMapping("")
+    @GetMapping("/read")
     public ApiResponse<ItemAllResponseDto> getItems(
             @RequestParam String type
     ) {
