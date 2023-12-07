@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final SellerRepository sellerRepository;
 
     public ItemResponseDto addItem(ItemRequestDto requestDto, User user) {
         Seller seller = user.getSeller();
@@ -46,7 +45,7 @@ public class ItemService {
     }
 
     public ItemResponseDto getItem(Long itemId){
-        Item item = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
         return new ItemResponseDto(item);
     }
 
@@ -57,7 +56,7 @@ public class ItemService {
     }
 
     private Item getUserItem(Long itemId, User user){
-        Item item = itemRepository.findById(itemId).orElseThrow(NullPointerException::new);
+        Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
         Seller seller = user.getSeller();
         if(!item.getSeller().getId().equals(seller.getId())){
             throw new RejectedExecutionException("작성자만 수정할 수 있습니다.");
