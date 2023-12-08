@@ -76,7 +76,7 @@ public class OrderController {
             }else{
                 throw new IllegalArgumentException("url이 정확하지 않습니다");
             }
-            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDtos);
+            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"나의 구매 요청 조회에 성공했습니다",responseDtos);
         }catch (RejectedExecutionException | NullPointerException | IllegalArgumentException ex){
             return new ApiResponse<List<OrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
