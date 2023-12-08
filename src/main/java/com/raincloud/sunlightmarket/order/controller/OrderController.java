@@ -100,4 +100,17 @@ public class OrderController {
             return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
     }
+
+    @PutMapping("/confirm")
+    public ApiResponse<OrderResponseDto> confirmOrder(
+            @RequestParam Long orderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        try {
+            OrderResponseDto responseDto = orderService.confirmOrder(orderId,userDetails.getUser());
+            return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 승인 성공했습니다",responseDto);
+        }catch (RejectedExecutionException | NullPointerException ex){
+            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+        }
+    }
 }

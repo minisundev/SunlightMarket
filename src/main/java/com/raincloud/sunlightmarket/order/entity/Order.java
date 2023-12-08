@@ -60,4 +60,12 @@ public class Order extends Timestamped {
         this.orderStatus = "REJECTED";
         this.completed = true;
     }
+
+    public void confirm(){
+        if(this.completed == true){
+            throw new RejectedExecutionException("이미 처리된 요청입니다");
+        }
+        this.orderStatus = "CONFIRMED";
+        this.completed = true;
+    }
 }
