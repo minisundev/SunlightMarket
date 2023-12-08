@@ -1,10 +1,12 @@
 package com.raincloud.sunlightmarket.order.service;
 
+import com.raincloud.sunlightmarket.global.dto.DoubleResponse;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.item.repository.ItemRepository;
 import com.raincloud.sunlightmarket.order.dto.OrderRequestDto;
 import com.raincloud.sunlightmarket.order.dto.OrderResponseDto;
+import com.raincloud.sunlightmarket.order.dto.PublicOrderResponseDto;
 import com.raincloud.sunlightmarket.order.entity.Order;
 import com.raincloud.sunlightmarket.order.repository.OrderRepository;
 import com.raincloud.sunlightmarket.user.entity.Buyer;
@@ -14,6 +16,7 @@ import com.raincloud.sunlightmarket.user.repository.BuyerRepository;
 import com.raincloud.sunlightmarket.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
@@ -37,23 +40,55 @@ public class OrderService {
         return new OrderResponseDto(order);
     }
 
-    public List<OrderResponseDto> getOrders(Long itemId){
-        return orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 주문요청을 찾을 수 없습니다."))
+    public List<PublicOrderResponseDto> getOrders(Long itemId){
+        return orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."))
                 .stream()
-                .map(OrderResponseDto::new)
+                .map(PublicOrderResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    private Item getItemById(Long itemId){
-         Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
-        return item;
+    public DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>> getOrdersForUsers(Long itemId, User user){
+        List<Order> orders = orderRepository.findAllByItemId(itemId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
+        List<OrderResponseDto> orderDtos = null;
+        List<PublicOrderResponseDto> publicOrderDtos = null;
+        if(orders.get(0).getItem().getSeller().getId().equals(user.getSeller().getId())){//Item의 작성자가 볼때는 orderId와 address가 포함된 response리턴
+            orderDtos = orders.stream()
+                    .map(OrderResponseDto::new)
+                    .collect(Collectors.toList());
+        }else {//Item의 작성자가 아닌 유저가 볼때는 orderId와 address가 제외된 response리턴
+            publicOrderDtos = orders.stream()
+                    .map(PublicOrderResponseDto::new)
+                    .collect(Collectors.toList());
+        }
+        return new DoubleResponse(orderDtos,publicOrderDtos);
+    }
+
+    @Transactional
+    public OrderResponseDto updateOrder(OrderRequestDto requestDto, Long orderId, User user){
+        Order order = getUserOrderById(orderId,user);
+        order.update(requestDto);
+        return new OrderResponseDto(order);
+    }
+
+    public OrderResponseDto deleteOrder(Long orderId, User user){
+        Order order = getUserOrderById(orderId,user);
+        orderRepository.delete(order);
+        return new OrderResponseDto(order);
+    }
+
+    private Order getUserOrderById(Long orderId,User user){
+        Order order = orderRepository.findById(orderId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
+        if(!order.getBuyer().getUser().getId().equals(user.getId())){
+            throw new RejectedExecutionException("작성자만 구매요청을 수정/삭제할 수 있습니다.");
+        }
+        return order;
     }
 
     private Item getNotUserItemById(Long itemId, User user){
         Item item = itemRepository.findById(itemId).orElseThrow(()-> new NullPointerException("해당 id로 아이템을 찾을 수 없습니다."));
         User userFound = item.getSeller().getUser();
         if(userFound.getId().equals(user.getId())){
-            throw new RejectedExecutionException("작성자는 구매 요청을 할 수 없습니다.");
+            throw new RejectedExecutionException("작성자는 구매요청을 할 수 없습니다.");
         }
         return item;
     }

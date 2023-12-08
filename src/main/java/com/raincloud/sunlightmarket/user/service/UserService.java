@@ -4,6 +4,7 @@ import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.review.toseller.dto.response.CreateReviewToSellerResponseDto;
 import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
+import com.raincloud.sunlightmarket.user.dto.request.PasswordRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
 import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
@@ -140,5 +141,23 @@ public class UserService {
                 .items(items)
                 .reviews(reviews)
                 .build();
+    }
+
+    @Transactional
+    public void updatePassword(final User user, final PasswordRequestDto passwordRequestDto) {
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
+        );
+
+        if (!passwordEncoder.matches(passwordRequestDto.getCurrentPassword(),
+                loginUser.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않아 변경할 수 없습니다.");
+        }
+
+        if (!passwordRequestDto.getNewPassword().equals(passwordRequestDto.getCheckNewPassword())) {
+            throw new IllegalArgumentException("비밀번호 확인이 일치하지 않아 변경할 수 없습니다.");
+        }
+
+        loginUser.updatePassword(passwordEncoder.encode(passwordRequestDto.getNewPassword()));
     }
 }
