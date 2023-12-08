@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 public class ItemResponseDto{
+    private Long id;
     private String nickname;
     private String title;
     private String image;
@@ -22,6 +23,7 @@ public class ItemResponseDto{
     private LocalDateTime modified_at;
 
     public ItemResponseDto(Item item) {
+        this.id = item.getId();
         this.title = item.getTitle();
         this.nickname = item.getSeller().getNickname();
         this.content = item.getContent();
