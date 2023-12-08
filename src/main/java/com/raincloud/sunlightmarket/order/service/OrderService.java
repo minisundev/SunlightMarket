@@ -76,10 +76,25 @@ public class OrderService {
         return new OrderResponseDto(order);
     }
 
+    @Transactional
+    public OrderResponseDto rejectOrder(Long orderId, User user){
+        Order order = getItemOwnerOrderById(orderId,user);
+        order.reject();
+        return new OrderResponseDto(order);
+    }
+
     private Order getUserOrderById(Long orderId,User user){
         Order order = orderRepository.findById(orderId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
         if(!order.getBuyer().getUser().getId().equals(user.getId())){
             throw new RejectedExecutionException("작성자만 구매요청을 수정/삭제할 수 있습니다.");
+        }
+        return order;
+    }
+
+    private Order getItemOwnerOrderById(Long orderId,User user){
+        Order order = orderRepository.findById(orderId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
+        if(!order.getItem().getSeller().getUser().getId().equals(user.getId())){
+            throw new RejectedExecutionException("아이템 작성자만 구매요청을 승인/거절할 수 있습니다.");
         }
         return order;
     }
