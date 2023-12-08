@@ -19,7 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Controller
@@ -39,10 +45,11 @@ public class UserController {
     }
 
     @GetMapping("/kakao/callback")
-    public String kakaoLogin(@RequestBody String code, HttpServletResponse response) throws JsonProcessingException {
+    public String kakaoLogin(@RequestBody String code, HttpServletResponse response)
+        throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
 
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
+        Cookie cookie = new Cookie(JwtUtil.ACCESS_TOKEN_HEADER, token.substring(7));
         response.addCookie(cookie);
 
         return null;
@@ -50,16 +57,17 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<MyProfileResponseDto> updateProfile(
-            @RequestBody MyProfileRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+        @RequestBody MyProfileRequestDto requestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        MyProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(), requestDto);
+        MyProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(),
+            requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @GetMapping("/profile")
     public ResponseEntity<MyProfileResponseDto> myProfile(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         MyProfileResponseDto responseDto = userService.getProfile(userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -67,7 +75,7 @@ public class UserController {
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity<UserProfileResponseDto> userProfile(
-            @PathVariable Long userId
+        @PathVariable Long userId
     ) {
         UserProfileResponseDto responseDto = userService.getUserProfile(userId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -75,9 +83,16 @@ public class UserController {
 
     @PutMapping("/password")
     public ResponseEntity<String> updateIntro(
-            @RequestBody PasswordRequestDto passwordRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @RequestBody PasswordRequestDto passwordRequestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.updatePassword(userDetails.getUser(), passwordRequestDto);
         return ResponseEntity.ok("OK");
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.logout(userDetails.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");
     }
 }

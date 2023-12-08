@@ -1,6 +1,7 @@
 package com.raincloud.sunlightmarket.global.config;
 
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
+import com.raincloud.sunlightmarket.global.jwt.TokenRepository;
 import com.raincloud.sunlightmarket.global.security.JwtAuthenticationFilter;
 import com.raincloud.sunlightmarket.global.security.JwtAuthorizationFilter;
 import com.raincloud.sunlightmarket.global.security.UserDetailsServiceImpl;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final TokenRepository tokenRepository;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration configuration;
 
@@ -41,14 +43,14 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, tokenRepository);
         filter.setAuthenticationManager(authenticationManager(configuration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthentizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, tokenRepository, userDetailsService);
     }
 
     @Bean
@@ -64,8 +66,8 @@ public class WebSecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/api/users/**").permitAll()
-                    .requestMatchers("/api/items/read/**").permitAll()
-                    .requestMatchers("/api/orders/read/**").permitAll()
+                .requestMatchers("/api/items/read/**").permitAll()
+                .requestMatchers("/api/orders/read/**").permitAll()
                 .anyRequest().authenticated());
 
         httpSecurity

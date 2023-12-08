@@ -18,10 +18,12 @@ import java.util.Date;
 @Slf4j
 public class JwtUtil {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String ACCESS_TOKEN_HEADER = "AccessToken";
+    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
+    private final long ACCESS_TOKEN_TIME = 20 * 1 * 1000L;
+    private final long REFRESH_TOKEN_TIME = 60 * 60 * 1000L * 24 * 5;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -34,21 +36,32 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String username, UserRoleEnum roleEnum) {
+    public String createAccessToken(String username, UserRoleEnum roleEnum) {
         Date date = new Date();
 
         return BEARER_PREFIX +
             Jwts.builder()
                 .setSubject(username)
                 .claim(AUTHORIZATION_KEY, roleEnum)
-                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
 
-    public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+    public String createRefreshToken() {
+        Date date = new Date();
+
+        return BEARER_PREFIX +
+            Jwts.builder()
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+    }
+
+    public String getJwtFromHeader(HttpServletRequest request, String token) {
+        String bearerToken = request.getHeader(token);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
