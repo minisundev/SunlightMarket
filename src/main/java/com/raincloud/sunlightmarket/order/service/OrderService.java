@@ -83,6 +83,15 @@ public class OrderService {
         return new OrderResponseDto(order);
     }
 
+    @Transactional
+    public OrderResponseDto confirmOrder(Long orderId, User user){
+        Order order = getItemOwnerOrderById(orderId,user);
+        Item item = order.getItem();
+        item.complete();
+        order.confirm();
+        return new OrderResponseDto(order);
+    }
+
     private Order getUserOrderById(Long orderId,User user){
         Order order = orderRepository.findById(orderId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
         if(!order.getBuyer().getUser().getId().equals(user.getId())){

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 
 @Getter
 @Entity
@@ -67,5 +68,12 @@ public class Item extends Timestamped {
         price = requestDto.getPrice();
         content = requestDto.getContent();
         address = requestDto.getAddress();
+    }
+
+    public void complete(){
+        if(this.completed == true){
+            throw new RejectedExecutionException("이미 주문이 완료된 아이템입니다");
+        }
+        this.completed = true;
     }
 }
