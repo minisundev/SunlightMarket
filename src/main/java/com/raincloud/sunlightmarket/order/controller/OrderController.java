@@ -61,6 +61,18 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/myorders")
+    public ApiResponse<List<OrderResponseDto>> getMyOrders(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        try {
+            List<OrderResponseDto> responseDtos = orderService.getMyOrders(userDetails.getUser());
+            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDtos);
+        }catch (RejectedExecutionException | NullPointerException ex){
+            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+        }
+    }
+
     @PutMapping("")
     public ApiResponse<OrderResponseDto> updateOrder(
             @RequestBody OrderRequestDto requestDto,
