@@ -54,7 +54,7 @@ public class Order extends Timestamped {
     }
 
     public void reject(){
-        if(this.completed == true){
+        if(completed){
             throw new RejectedExecutionException("이미 처리된 요청입니다");
         }
         this.orderStatus = "REJECTED";
@@ -62,10 +62,18 @@ public class Order extends Timestamped {
     }
 
     public void confirm(){
-        if(this.completed == true){
+        if(completed){
             throw new RejectedExecutionException("이미 처리된 요청입니다");
         }
         this.orderStatus = "CONFIRMED";
         this.completed = true;
+    }
+
+    public void confirmDelivery(){
+        if(this.orderStatus.equals("CONFIRMED")){
+            this.orderStatus = "DELIVERED";
+        }else{
+            throw new RejectedExecutionException("유효하지 않은 요청입니다.");
+        }
     }
 }

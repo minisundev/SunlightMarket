@@ -76,4 +76,11 @@ public class Item extends Timestamped {
         }
         this.completed = true;
     }
+
+    public void confirmDelivery(){
+        if(this.delivered == true){
+            throw new RejectedExecutionException("이미 배달이 완료된 아이템입니다");
+        }
+        this.delivered = true;
+    }
 }
