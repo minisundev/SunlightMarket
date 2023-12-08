@@ -63,10 +63,33 @@ public class OrderService {
         return new DoubleResponse(orderDtos,publicOrderDtos);
     }
 
+    public List<OrderResponseDto> getAllMyOrders(User user){
+        return orderRepository.findAllByBuyerId(user.getBuyer().getId()).orElseThrow(()-> new NullPointerException("주문 요청이 존재하지 않습니다"))
+                .stream()
+                .map(OrderResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderResponseDto> getMyConfirmedOrders(User user){
+        Long buyerId = user.getBuyer().getId();
+        List<Order> orders = orderRepository.findAllByBuyerIdAndOrderStatusEquals(buyerId,"CONFIRMED").orElseThrow(()-> new NullPointerException("주문 요청이 존재하지 않습니다"));
+        return orders.stream()
+                .map(OrderResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public OrderResponseDto updateOrder(OrderRequestDto requestDto, Long orderId, User user){
         Order order = getUserOrderById(orderId,user);
         order.update(requestDto);
+        return new OrderResponseDto(order);
+    }
+    @Transactional
+    public OrderResponseDto confirmDelivery(Long orderId,User user){
+        Order order = getUserOrderById(orderId,user);
+        Item item = order.getItem();
+        item.confirmDelivery();
+        order.confirmDelivery();
         return new OrderResponseDto(order);
     }
 
@@ -76,10 +99,34 @@ public class OrderService {
         return new OrderResponseDto(order);
     }
 
+    @Transactional
+    public OrderResponseDto rejectOrder(Long orderId, User user){
+        Order order = getItemOwnerOrderById(orderId,user);
+        order.reject();
+        return new OrderResponseDto(order);
+    }
+
+    @Transactional
+    public OrderResponseDto confirmOrder(Long orderId, User user){
+        Order order = getItemOwnerOrderById(orderId,user);
+        Item item = order.getItem();
+        item.complete();
+        order.confirm();
+        return new OrderResponseDto(order);
+    }
+
     private Order getUserOrderById(Long orderId,User user){
         Order order = orderRepository.findById(orderId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
         if(!order.getBuyer().getUser().getId().equals(user.getId())){
-            throw new RejectedExecutionException("작성자만 구매요청을 수정/삭제할 수 있습니다.");
+            throw new RejectedExecutionException("작성자만 주문을 수정/삭제할 수 있습니다.");
+        }
+        return order;
+    }
+
+    private Order getItemOwnerOrderById(Long orderId,User user){
+        Order order = orderRepository.findById(orderId).orElseThrow(()-> new NullPointerException("해당 id로 구매요청을 찾을 수 없습니다."));
+        if(!order.getItem().getSeller().getUser().getId().equals(user.getId())){
+            throw new RejectedExecutionException("아이템 작성자만 구매요청을 승인/거절할 수 있습니다.");
         }
         return order;
     }
