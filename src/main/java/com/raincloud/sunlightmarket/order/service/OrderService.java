@@ -8,6 +8,7 @@ import com.raincloud.sunlightmarket.order.dto.OrderRequestDto;
 import com.raincloud.sunlightmarket.order.dto.OrderResponseDto;
 import com.raincloud.sunlightmarket.order.dto.PublicOrderResponseDto;
 import com.raincloud.sunlightmarket.order.entity.Order;
+import com.raincloud.sunlightmarket.order.entity.OrderStatus;
 import com.raincloud.sunlightmarket.order.repository.OrderRepository;
 import com.raincloud.sunlightmarket.user.entity.Buyer;
 import com.raincloud.sunlightmarket.user.entity.Seller;
@@ -72,7 +73,7 @@ public class OrderService {
 
     public List<OrderResponseDto> getMyConfirmedOrders(User user){
         Long buyerId = user.getBuyer().getId();
-        List<Order> orders = orderRepository.findAllByBuyerIdAndOrderStatusEquals(buyerId,"CONFIRMED").orElseThrow(()-> new NullPointerException("주문 요청이 존재하지 않습니다"));
+        List<Order> orders = orderRepository.findAllByBuyerIdAndOrderStatusEquals(buyerId, OrderStatus.CONFIRMED).orElseThrow(()-> new NullPointerException("주문 요청이 존재하지 않습니다"));
         return orders.stream()
                 .map(OrderResponseDto::new)
                 .collect(Collectors.toList());
