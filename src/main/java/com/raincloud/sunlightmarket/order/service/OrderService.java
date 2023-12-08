@@ -63,6 +63,13 @@ public class OrderService {
         return new DoubleResponse(orderDtos,publicOrderDtos);
     }
 
+    public List<OrderResponseDto> getMyOrders(User user){
+        return orderRepository.findAllByBuyerId(user.getBuyer().getId()).orElseThrow(()-> new NullPointerException("주문 요청이 존재하지 않습니다"))
+                .stream()
+                .map(OrderResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public OrderResponseDto updateOrder(OrderRequestDto requestDto, Long orderId, User user){
         Order order = getUserOrderById(orderId,user);
