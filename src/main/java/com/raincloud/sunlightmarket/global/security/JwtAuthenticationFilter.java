@@ -53,7 +53,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserRoleEnum roleEnum = ((UserDetailsImpl) authentication.getPrincipal()).getUser()
             .getRole();
 
-        String token = jwtUtil.createToken(username, roleEnum);
+        String accessToken = jwtUtil.createAccessToken(username, roleEnum);
+        String refreshToken = jwtUtil.createRefreshToken(username, roleEnum);
+
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
     }
 
