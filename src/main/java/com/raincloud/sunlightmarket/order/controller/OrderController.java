@@ -7,6 +7,7 @@ import com.raincloud.sunlightmarket.order.dto.OrderRequestDto;
 import com.raincloud.sunlightmarket.order.dto.OrderResponseDto;
 import com.raincloud.sunlightmarket.order.dto.PublicOrderResponseDto;
 import com.raincloud.sunlightmarket.order.service.OrderService;
+import com.raincloud.sunlightmarket.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,14 +64,32 @@ public class OrderController {
 
     @GetMapping("/myorders")
     public ApiResponse<List<OrderResponseDto>> getMyOrders(
+            @RequestParam String type,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
-            List<OrderResponseDto> responseDtos = orderService.getMyOrders(userDetails.getUser());
-            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDtos);
-        }catch (RejectedExecutionException | NullPointerException ex){
+            List<OrderResponseDto> responseDtos;
+            if(type.equals("All")){
+                responseDtos = getAllMyOrders(userDetails.getUser());
+            }else if(type.equals("Confirmed")){
+                responseDtos = getMyConfirmedOrders(userDetails.getUser());
+            }else{
+                throw new IllegalArgumentException("url이 정확하지 않습니다");
+            }
+            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"나의 구매 요청 조회에 성공했습니다",responseDtos);
+        }catch (RejectedExecutionException | NullPointerException | IllegalArgumentException ex){
             return new ApiResponse<List<OrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
         }
+    }
+
+    public List<OrderResponseDto> getAllMyOrders(User user)
+    {
+        return orderService.getAllMyOrders(user);
+    }
+
+    public List<OrderResponseDto> getMyConfirmedOrders(User user)
+    {
+        return orderService.getMyConfirmedOrders(user);
     }
 
     @PutMapping("")
