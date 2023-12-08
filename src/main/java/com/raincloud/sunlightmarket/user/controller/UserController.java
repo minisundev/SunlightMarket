@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
 import com.raincloud.sunlightmarket.global.security.UserDetailsImpl;
 import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
+import com.raincloud.sunlightmarket.user.dto.request.PasswordRequestDto;
 import com.raincloud.sunlightmarket.user.dto.request.SingUpRequestDto;
 import com.raincloud.sunlightmarket.user.dto.response.MyProfileResponseDto;
 import com.raincloud.sunlightmarket.user.dto.response.SignUpResponseDto;
@@ -70,5 +71,13 @@ public class UserController {
     ) {
         UserProfileResponseDto responseDto = userService.getUserProfile(userId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<String> updateIntro(
+            @RequestBody PasswordRequestDto passwordRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.updatePassword(userDetails.getUser(), passwordRequestDto);
+        return ResponseEntity.ok("OK");
     }
 }
