@@ -5,7 +5,7 @@ import static com.raincloud.sunlightmarket.global.jwt.JwtUtil.BEARER_PREFIX;
 import static com.raincloud.sunlightmarket.global.jwt.JwtUtil.REFRESH_TOKEN_HEADER;
 
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
-import com.raincloud.sunlightmarket.global.repository.TokenRepository;
+import com.raincloud.sunlightmarket.global.jwt.TokenRepository;
 import com.raincloud.sunlightmarket.user.entity.User;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -46,14 +46,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String refreshToken = jwtUtil.getJwtFromHeader(request, REFRESH_TOKEN_HEADER);
 
             if (StringUtils.hasText(accessToken) && !jwtUtil.validateToken(refreshToken)) {
-                Long userId = (Long) 저장repository.get(refreshToken);
-//                User user = userDetailsService.UserById(userId);
-//                accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole()
-//                ).substring(7);
-//                response.addHeader("AccessToken", BEARER_PREFIX + accessToken);
-//                log.error("token 에러");
-//                return;
+                User user = tokenRepository.findByToken(refreshToken);
+                accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole()
+                ).substring(7);
+                response.addHeader("AccessToken", BEARER_PREFIX + accessToken);
             }
+        }
+
+        if (StringUtils.hasText(accessToken)) {
             Claims info = jwtUtil.getUserInfoFromToken(accessToken);
             try {
                 setAuthentication(info.getSubject());
@@ -62,6 +62,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
         }
+
         chain.doFilter(request, response);
     }
 

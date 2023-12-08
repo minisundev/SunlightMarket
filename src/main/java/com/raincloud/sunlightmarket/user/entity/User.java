@@ -2,6 +2,7 @@ package com.raincloud.sunlightmarket.user.entity;
 
 import com.raincloud.sunlightmarket.global.entity.Timestamped;
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
+import com.raincloud.sunlightmarket.global.jwt.JwtEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,8 +54,12 @@ public class User extends Timestamped {
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     Seller seller;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+    JwtEntity jwtEntity;
+
     @Builder
-    public User(final Long id, final Long kakaoId, final String nickname, final String password, final String email, final String intro, final UserRoleEnum role) {
+    public User(final Long id, final Long kakaoId, final String nickname, final String password,
+        final String email, final String intro, final UserRoleEnum role) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.nickname = nickname;
