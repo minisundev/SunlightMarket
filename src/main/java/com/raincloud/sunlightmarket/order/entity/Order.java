@@ -37,7 +37,6 @@ public class Order extends Timestamped {
 
     private String price;
 
-    private Boolean completed;
 
     public Order(OrderRequestDto requestDto, Item item, Buyer buyer){
         this.item = item;
@@ -45,7 +44,6 @@ public class Order extends Timestamped {
         this.address = requestDto.getAddress();
         this.orderStatus = "PENDING";
         this.price = requestDto.getPrice();
-        this.completed = false;
     }
 
     public void update(OrderRequestDto requestDto){
@@ -54,19 +52,17 @@ public class Order extends Timestamped {
     }
 
     public void reject(){
-        if(completed){
+        if(this.orderStatus.equals("CONFIRMED")||this.orderStatus.equals("REJECTED")){
             throw new RejectedExecutionException("이미 처리된 요청입니다");
         }
         this.orderStatus = "REJECTED";
-        this.completed = true;
     }
 
     public void confirm(){
-        if(completed){
+        if(this.orderStatus.equals("CONFIRMED")||this.orderStatus.equals("REJECTED")){
             throw new RejectedExecutionException("이미 처리된 요청입니다");
         }
         this.orderStatus = "CONFIRMED";
-        this.completed = true;
     }
 
     public void confirmDelivery(){
