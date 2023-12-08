@@ -2,6 +2,7 @@ package com.raincloud.sunlightmarket.order.dto;
 
 import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.order.entity.Order;
+import com.raincloud.sunlightmarket.order.entity.OrderStatus;
 import com.raincloud.sunlightmarket.user.entity.Buyer;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class OrderResponseDto {
 
     private String price;
 
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
 
     public OrderResponseDto(Order order){

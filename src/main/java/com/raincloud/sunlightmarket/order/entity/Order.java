@@ -33,7 +33,7 @@ public class Order extends Timestamped {
 
     private String address;
 
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     private String price;
 
@@ -42,7 +42,7 @@ public class Order extends Timestamped {
         this.item = item;
         this.buyer = buyer;
         this.address = requestDto.getAddress();
-        this.orderStatus = "PENDING";
+        this.orderStatus = OrderStatus.PENDING;
         this.price = requestDto.getPrice();
     }
 
@@ -52,22 +52,22 @@ public class Order extends Timestamped {
     }
 
     public void reject(){
-        if(this.orderStatus.equals("CONFIRMED")||this.orderStatus.equals("REJECTED")){
+        if(!this.orderStatus.equals(OrderStatus.PENDING)){
             throw new RejectedExecutionException("이미 처리된 요청입니다");
         }
-        this.orderStatus = "REJECTED";
+        this.orderStatus = OrderStatus.REJECTED;
     }
 
     public void confirm(){
-        if(this.orderStatus.equals("CONFIRMED")||this.orderStatus.equals("REJECTED")){
+        if(!this.orderStatus.equals(OrderStatus.PENDING)){
             throw new RejectedExecutionException("이미 처리된 요청입니다");
         }
-        this.orderStatus = "CONFIRMED";
+        this.orderStatus = OrderStatus.CONFIRMED;
     }
 
     public void confirmDelivery(){
-        if(this.orderStatus.equals("CONFIRMED")){
-            this.orderStatus = "DELIVERED";
+        if(this.orderStatus.equals(OrderStatus.CONFIRMED)){
+            this.orderStatus = OrderStatus.DELIVERED;
         }else{
             throw new RejectedExecutionException("유효하지 않은 요청입니다.");
         }

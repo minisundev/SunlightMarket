@@ -1,6 +1,7 @@
 package com.raincloud.sunlightmarket.order.dto;
 
 import com.raincloud.sunlightmarket.order.entity.Order;
+import com.raincloud.sunlightmarket.order.entity.OrderStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +14,7 @@ public class PublicOrderResponseDto {
 
     private String price;
 
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
 
     public PublicOrderResponseDto(Order order){
