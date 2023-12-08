@@ -2,6 +2,7 @@ package com.raincloud.sunlightmarket.item.dto;
 
 import com.raincloud.sunlightmarket.global.dto.CommonResponseDto;
 import com.raincloud.sunlightmarket.item.entity.Item;
+import com.raincloud.sunlightmarket.item.entity.ItemStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +17,7 @@ public class ItemResponseDto{
     private String price;
     private String address;
     private String content;
+    private ItemStatus itemstatus;
     private LocalDateTime created_at;
     private LocalDateTime modified_at;
 
@@ -28,5 +30,6 @@ public class ItemResponseDto{
         this.address = item.getAddress();
         this.created_at = item.getCreatedAt();
         this.modified_at = item.getModifiedAt();
+        this.itemstatus = item.getItemstatus();
     }
 }
