@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.util.concurrent.RejectedExecutionException;
+
 @Getter
 @Entity
 @Table(name = "orders")
@@ -35,16 +37,27 @@ public class Order extends Timestamped {
 
     private String price;
 
+    private Boolean completed;
+
     public Order(OrderRequestDto requestDto, Item item, Buyer buyer){
         this.item = item;
         this.buyer = buyer;
         this.address = requestDto.getAddress();
         this.orderStatus = "PENDING";
         this.price = requestDto.getPrice();
+        this.completed = false;
     }
 
     public void update(OrderRequestDto requestDto){
         this.address = requestDto.getAddress();
         this.price = requestDto.getPrice();
+    }
+
+    public void reject(){
+        if(this.completed == true){
+            throw new RejectedExecutionException("이미 처리된 요청입니다");
+        }
+        this.orderStatus = "REJECTED";
+        this.completed = true;
     }
 }
