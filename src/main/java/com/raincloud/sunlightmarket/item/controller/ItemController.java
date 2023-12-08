@@ -7,29 +7,44 @@ import com.raincloud.sunlightmarket.item.dto.ItemRequestDto;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
 import com.raincloud.sunlightmarket.item.service.ItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/items")
-public class ItemController {
+public class  ItemController {
 
     private final ItemService itemService;
 
     //상품 등록
     @PostMapping("/add")
     public ApiResponse<ItemResponseDto> addItem(
-            @RequestBody ItemRequestDto requestDto,
+            @Valid @RequestBody ItemRequestDto requestDto,
+            BindingResult bindingResult,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         try {
+            // Validation 예외 처리
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            if (fieldErrors.size() > 0) {
+                for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                    log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
+                }
+                throw new IllegalArgumentException("입력 형식이 정확하지 않습니다");
+            }
             ItemResponseDto responseDto = itemService.addItem(requestDto, userDetails.getUser());
             return new ApiResponse<ItemResponseDto>(HttpStatus.CREATED.value(),"아이템 추가 성공했습니다",responseDto);
         }catch (RejectedExecutionException | IllegalArgumentException | NullPointerException ex){

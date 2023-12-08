@@ -39,13 +39,12 @@ public class UserController {
     }
 
     @GetMapping("/kakao/callback")
-    public String kakaoLogin(@RequestBody String code, HttpServletResponse response) throws JsonProcessingException {
+    public void kakaoLogin(@RequestBody String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
 
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
         response.addCookie(cookie);
 
-        return null;
     }
 
     @PutMapping("/profile")
