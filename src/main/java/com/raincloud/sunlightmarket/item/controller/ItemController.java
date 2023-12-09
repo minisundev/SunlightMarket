@@ -70,7 +70,7 @@ public class  ItemController {
         return new ApiResponse<>(HttpStatus.OK.value(),"아이템 삭제 성공했습니다");
     }
 
-    //선택 상품 조회
+    //선택 상품 조회, 비로그인
     @GetMapping("/read/{itemId}")
     public ApiResponse<ItemResponseDto> getItem(
             @PathVariable Long itemId
@@ -79,7 +79,14 @@ public class  ItemController {
         return new ApiResponse<>(HttpStatus.OK.value(),"아이템 조회에 성공했습니다",responseDto);
     }
 
-    //전체 상품 조회
+    //전체 상품 조회, 비로그인
+    @GetMapping("/read")
+    public ApiResponse<List<ItemResponseDto>> getAllItemsForAll(
+    ) {
+        return getAllItems();
+    }
+
+    //전체 상품 조회, 로그인
     @GetMapping("")
     public ApiResponse<List<ItemResponseDto>> getItems(
             @RequestParam String type,
