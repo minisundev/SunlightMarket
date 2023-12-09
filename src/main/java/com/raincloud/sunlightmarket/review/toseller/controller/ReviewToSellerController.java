@@ -1,5 +1,6 @@
 package com.raincloud.sunlightmarket.review.toseller.controller;
 
+import com.raincloud.sunlightmarket.global.dto.ApiResponse;
 import com.raincloud.sunlightmarket.global.security.UserDetailsImpl;
 import com.raincloud.sunlightmarket.review.toseller.dto.request.ReviewToSellerRequestDto;
 import com.raincloud.sunlightmarket.review.toseller.dto.response.CreateReviewToSellerResponseDto;
@@ -26,18 +27,18 @@ public class ReviewToSellerController {
     private final ReviewToSellerService reviewToSellerService;
 
     @PostMapping
-    public ResponseEntity<CreateReviewToSellerResponseDto> createReview(
+    public ApiResponse<CreateReviewToSellerResponseDto> createReview(
         @PathVariable Long sellerId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody ReviewToSellerRequestDto requestDto) {
 
         CreateReviewToSellerResponseDto responseDto =
             reviewToSellerService.createReview(sellerId, userDetails.getUser(), requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        return new ApiResponse<>(HttpStatus.CREATED.value(),"리뷰가 생성되었습니다",responseDto);
     }
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<UpdateReviewToSellerResponseDto> updateReview(
+    public ApiResponse<UpdateReviewToSellerResponseDto> updateReview(
         @PathVariable Long sellerId,
         @PathVariable Long reviewId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -46,27 +47,27 @@ public class ReviewToSellerController {
         UpdateReviewToSellerResponseDto responseDto =
             reviewToSellerService.updateReview(sellerId, reviewId, userDetails.getUser(),
                 requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return new ApiResponse<>(HttpStatus.OK.value(),"리뷰가 수정되었습니다",responseDto);
     }
 
     @PatchMapping("/{reviewId}/like")
-    public ResponseEntity<String> clickLike(
+    public ApiResponse<Void> clickLike(
         @PathVariable Long sellerId,
         @PathVariable Long reviewId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         String message = reviewToSellerService.clickLike(sellerId, reviewId, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.OK).body(message);
+        return new ApiResponse<>(HttpStatus.OK.value(),message);
     }
 
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<String> deleteReview(
+    public ApiResponse<Void> deleteReview(
         @PathVariable Long sellerId,
         @PathVariable Long reviewId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         reviewToSellerService.deleteReview(sellerId, reviewId, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.OK).body("해당 리뷰가 삭제 되었습니다.");
+        return new ApiResponse<>(HttpStatus.OK.value(),"해당 리뷰가 삭제 되었습니다.");
     }
 
 }
