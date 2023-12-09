@@ -20,4 +20,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             () -> new UsernameNotFoundException("유저정보를 찾을 수 없습니다."));
         return new UserDetailsImpl(user);
     }
+
+    public User UserById(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("회원정보가 일치하지 않습니다."));
+    }
 }
