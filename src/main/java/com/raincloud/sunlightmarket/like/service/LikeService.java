@@ -22,7 +22,7 @@ public class LikeService {
   @Transactional
   public void createLikeForItem(Long userId , Long itemId) {
     Item item = itemRepository.findById(itemId)
-        .orElseThrow(() -> new EntityNotFoundException("TIL을 찾을 수 없습니다."));
+        .orElseThrow(() -> new EntityNotFoundException("해당 id로 아이템을 찾을 수 없습니다."));
 
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
