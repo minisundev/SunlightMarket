@@ -15,7 +15,7 @@ public class CreateReviewToSellerResponseDto {
 
     public CreateReviewToSellerResponseDto(ReviewToSeller review) {
         this.id = review.getId();
-        this.nickname = review.getUser().getNickname();
+        this.nickname = review.getUser().getBuyer().getNickname();
         this.comment = review.getComment();
         this.liked = review.getLiked();
         this.date = review.getCreatedAt();
