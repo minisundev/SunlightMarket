@@ -30,23 +30,15 @@ public class OrderController {
             @RequestParam Long itemId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            OrderResponseDto responseDto = orderService.addOrder(requestDto,itemId, userDetails.getUser());
-            return new ApiResponse<OrderResponseDto>(HttpStatus.CREATED.value(),"구매 요청 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        OrderResponseDto responseDto = orderService.addOrder(requestDto,itemId, userDetails.getUser());
+        return new ApiResponse<OrderResponseDto>(HttpStatus.CREATED.value(),"구매 요청 성공했습니다",responseDto);
     }
     @GetMapping("/read")
     public ApiResponse<List<PublicOrderResponseDto>> getOrdersForAll(
             @RequestParam Long itemId
     ) {
-        try {
-            List<PublicOrderResponseDto> responseDto = orderService.getOrders(itemId);
-            return new ApiResponse<List<PublicOrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<List<PublicOrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        List<PublicOrderResponseDto> responseDto = orderService.getOrders(itemId);
+        return new ApiResponse<List<PublicOrderResponseDto>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDto);
     }
 
     @GetMapping("")
@@ -54,12 +46,8 @@ public class OrderController {
             @RequestParam Long itemId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>> responseDto = orderService.getOrdersForUsers(itemId, userDetails.getUser());
-            return new ApiResponse<DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>> responseDto = orderService.getOrdersForUsers(itemId, userDetails.getUser());
+        return new ApiResponse<DoubleResponse<List<OrderResponseDto>,List<PublicOrderResponseDto>>>(HttpStatus.OK.value(),"구매 요청 조회에 성공했습니다",responseDto);
     }
 
     @GetMapping("/myorders")
@@ -67,19 +55,15 @@ public class OrderController {
             @RequestParam String type,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            List<OrderResponseDto> responseDtos;
-            if(type.equals("All")){
-                responseDtos = getAllMyOrders(userDetails.getUser());
-            }else if(type.equals("Confirmed")){
-                responseDtos = getMyConfirmedOrders(userDetails.getUser());
-            }else{
-                throw new IllegalArgumentException("url이 정확하지 않습니다");
-            }
-            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"나의 구매 요청 조회에 성공했습니다",responseDtos);
-        }catch (RejectedExecutionException | NullPointerException | IllegalArgumentException ex){
-            return new ApiResponse<List<OrderResponseDto>>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+        List<OrderResponseDto> responseDtos;
+        if(type.equals("All")){
+            responseDtos = getAllMyOrders(userDetails.getUser());
+        }else if(type.equals("Confirmed")){
+            responseDtos = getMyConfirmedOrders(userDetails.getUser());
+        }else{
+            throw new IllegalArgumentException("url이 정확하지 않습니다");
         }
+        return new ApiResponse<List<OrderResponseDto>>(HttpStatus.OK.value(),"나의 구매 요청 조회에 성공했습니다",responseDtos);
     }
 
     public List<OrderResponseDto> getAllMyOrders(User user)
@@ -98,12 +82,8 @@ public class OrderController {
             @RequestParam Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            OrderResponseDto responseDto = orderService.updateOrder(requestDto,orderId,userDetails.getUser());
-            return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 업데이트 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        OrderResponseDto responseDto = orderService.updateOrder(requestDto,orderId,userDetails.getUser());
+        return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 업데이트 성공했습니다",responseDto);
     }
 
     @DeleteMapping("")
@@ -111,12 +91,8 @@ public class OrderController {
             @RequestParam Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            OrderResponseDto responseDto = orderService.deleteOrder(orderId,userDetails.getUser());
-            return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 삭제 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        OrderResponseDto responseDto = orderService.deleteOrder(orderId,userDetails.getUser());
+        return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 삭제 성공했습니다",responseDto);
     }
 
     @PutMapping("/reject")
@@ -124,12 +100,8 @@ public class OrderController {
             @RequestParam Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            OrderResponseDto responseDto = orderService.rejectOrder(orderId,userDetails.getUser());
-            return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 거절 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        OrderResponseDto responseDto = orderService.rejectOrder(orderId,userDetails.getUser());
+        return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 거절 성공했습니다",responseDto);
     }
 
     @PutMapping("/confirm")
@@ -137,12 +109,8 @@ public class OrderController {
             @RequestParam Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            OrderResponseDto responseDto = orderService.confirmOrder(orderId,userDetails.getUser());
-            return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 승인 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        OrderResponseDto responseDto = orderService.confirmOrder(orderId,userDetails.getUser());
+        return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"구매 요청 승인 성공했습니다",responseDto);
     }
 
     @PutMapping("/deliver")
@@ -150,12 +118,8 @@ public class OrderController {
             @RequestParam Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        try {
-            OrderResponseDto responseDto = orderService.confirmDelivery(orderId,userDetails.getUser());
-            return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"배달 승인 성공했습니다",responseDto);
-        }catch (RejectedExecutionException | NullPointerException ex){
-            return new ApiResponse<OrderResponseDto>(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
-        }
+        OrderResponseDto responseDto = orderService.confirmDelivery(orderId,userDetails.getUser());
+        return new ApiResponse<OrderResponseDto>(HttpStatus.OK.value(),"배달 승인 성공했습니다",responseDto);
     }
 
 

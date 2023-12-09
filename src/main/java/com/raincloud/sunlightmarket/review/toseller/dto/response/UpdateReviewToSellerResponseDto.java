@@ -15,7 +15,7 @@ public class UpdateReviewToSellerResponseDto {
 
     public UpdateReviewToSellerResponseDto(ReviewToSeller review) {
         this.id = review.getId();
-        this.nickname = review.getUser().getNickname();
+        this.nickname = review.getUser().getBuyer().getNickname();
         this.comment = review.getComment();
         this.liked = review.getLiked();
         this.date = review.getModifiedAt();
