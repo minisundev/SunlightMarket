@@ -1,6 +1,7 @@
 package com.raincloud.sunlightmarket.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.raincloud.sunlightmarket.global.dto.ApiResponse;
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
 import com.raincloud.sunlightmarket.global.security.UserDetailsImpl;
 import com.raincloud.sunlightmarket.user.dto.request.MyProfileRequestDto;
@@ -32,51 +33,51 @@ public class UserController {
     private final KakaoService kakaoService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignUpResponseDto> signUp(@RequestBody SingUpRequestDto requestDto) {
+    public ApiResponse<SignUpResponseDto> signUp(@RequestBody SingUpRequestDto requestDto) {
         System.out.println("controller");
         SignUpResponseDto responseDto = userService.signUp(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        return new ApiResponse<>(HttpStatus.CREATED.value(),"회원가입 성공",responseDto);
     }
 
     @GetMapping("/kakao/callback")
-    public void kakaoLogin(@RequestBody String code, HttpServletResponse response) throws JsonProcessingException {
+    public ApiResponse<Void> kakaoLogin(@RequestBody String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
 
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
         response.addCookie(cookie);
-
+        return new ApiResponse<>(HttpStatus.OK.value(),"카카오 로그인 성공");
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<MyProfileResponseDto> updateProfile(
+    public ApiResponse<MyProfileResponseDto> updateProfile(
             @RequestBody MyProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         MyProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(), requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return new ApiResponse<>(HttpStatus.OK.value(),"프로필 업데이트 성공",responseDto);
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<MyProfileResponseDto> myProfile(
+    public ApiResponse<MyProfileResponseDto> myProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         MyProfileResponseDto responseDto = userService.getProfile(userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return new ApiResponse<>(HttpStatus.OK.value(),"내 프로필 조회 성공",responseDto);
     }
 
     @GetMapping("/profile/{userId}")
-    public ResponseEntity<UserProfileResponseDto> userProfile(
+    public ApiResponse<UserProfileResponseDto> userProfile(
             @PathVariable Long userId
     ) {
         UserProfileResponseDto responseDto = userService.getUserProfile(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+        return new ApiResponse<>(HttpStatus.OK.value(),"유저 프로필 조회 성공",responseDto);
     }
 
     @PutMapping("/password")
-    public ResponseEntity<String> updateIntro(
+    public ApiResponse<Void> updateIntro(
             @RequestBody PasswordRequestDto passwordRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.updatePassword(userDetails.getUser(), passwordRequestDto);
-        return ResponseEntity.ok("OK");
+        return new ApiResponse<>(HttpStatus.OK.value(),"비밀번호 수정 성공");
     }
 }
