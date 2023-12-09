@@ -2,7 +2,9 @@ package com.raincloud.sunlightmarket.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raincloud.sunlightmarket.global.entity.UserRoleEnum;
+import com.raincloud.sunlightmarket.global.jwt.JwtEntity;
 import com.raincloud.sunlightmarket.global.jwt.JwtUtil;
+import com.raincloud.sunlightmarket.global.jwt.TokenRepository;
 import com.raincloud.sunlightmarket.user.dto.request.LoginRequestDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +20,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtUtil jwtUtil;
+    private final TokenRepository tokenRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, TokenRepository tokenRepository) {
         this.jwtUtil = jwtUtil;
+        this.tokenRepository = tokenRepository;
         setFilterProcessesUrl("/api/users/login");
     }
 
@@ -53,8 +57,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserRoleEnum roleEnum = ((UserDetailsImpl) authentication.getPrincipal()).getUser()
             .getRole();
 
-        String token = jwtUtil.createToken(username, roleEnum);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        String accessToken = jwtUtil.createAccessToken(username, roleEnum);
+        String refreshToken = jwtUtil.createRefreshToken();
+
+        response.addHeader(JwtUtil.ACCESS_TOKEN_HEADER, accessToken);
+        response.addHeader(JwtUtil.REFRESH_TOKEN_HEADER, refreshToken);
+
+        JwtEntity jwt = JwtEntity.builder()
+            .token(refreshToken.substring(7))
+            .user(((UserDetailsImpl) authentication.getPrincipal()).getUser())
+            .build();
+        tokenRepository.save(jwt);
+
+
     }
 
     @Override
