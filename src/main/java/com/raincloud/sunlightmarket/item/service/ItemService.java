@@ -6,6 +6,7 @@ import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
 import com.raincloud.sunlightmarket.item.entity.Item;
 import com.raincloud.sunlightmarket.item.repository.ItemRepository;
+import com.raincloud.sunlightmarket.like.repository.LikeRepository;
 import com.raincloud.sunlightmarket.user.entity.Seller;
 import com.raincloud.sunlightmarket.user.entity.User;
 import com.raincloud.sunlightmarket.user.repository.SellerRepository;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final LikeRepository likeRepository;
 
     public ItemResponseDto addItem(ItemRequestDto requestDto, User user) {
         Seller seller = user.getSeller();
@@ -53,6 +56,17 @@ public class ItemService {
         return itemRepository.findAllByOrderByModifiedAtDesc().stream()
                 .map(ItemResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public List<ItemResponseDto> getAllLikedItems(User user) {
+        List<Item> items =  itemRepository.findAllByOrderByModifiedAtDesc();
+        List<ItemResponseDto> responseDtos = new ArrayList<>();
+        for(Item item : items){
+            if(likeRepository.existsByUserAndItem(user,item)){
+                responseDtos.add(new ItemResponseDto(item));
+            }
+        }
+        return  responseDtos;
     }
 
     private Item getUserItem(Long itemId, User user){

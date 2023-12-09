@@ -7,6 +7,7 @@ import com.raincloud.sunlightmarket.item.dto.ItemRequestDto;
 import com.raincloud.sunlightmarket.item.dto.ItemResponseDto;
 import com.raincloud.sunlightmarket.item.dto.ItemUpdateRequest;
 import com.raincloud.sunlightmarket.item.service.ItemService;
+import com.raincloud.sunlightmarket.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.parser.Authorization;
@@ -70,7 +71,6 @@ public class  ItemController {
     }
 
     //선택 상품 조회
-
     @GetMapping("/read/{itemId}")
     public ApiResponse<ItemResponseDto> getItem(
             @PathVariable Long itemId
@@ -80,19 +80,29 @@ public class  ItemController {
     }
 
     //전체 상품 조회
-    @GetMapping("/read")
-    public ApiResponse<ItemAllResponseDto> getItems(
-            @RequestParam String type
+    @GetMapping("")
+    public ApiResponse<List<ItemResponseDto>> getItems(
+            @RequestParam String type,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        if(type.equals("All")){ return getAllItems();}
-        else if(type.equals("Myselect")){return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),"myselect");}
+        if(type.equals("All")){
+            return getAllItems();
+        }
+        else if(type.equals("Myselect")){
+            return getAllLikedItems(userDetails.getUser());
+        }
         else{return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),"올바르지 않은 요청입니다");}
     }
 
-    public ApiResponse<ItemAllResponseDto> getAllItems()
+    public ApiResponse<List<ItemResponseDto>> getAllItems()
     {
-        ItemAllResponseDto responseDto = new ItemAllResponseDto();
-        responseDto.setItemResponseDtos(itemService.getAllItems());
-        return new ApiResponse<>(HttpStatus.OK.value(),"아이템 조회에 성공했습니다",responseDto);
+        List<ItemResponseDto> responseDto = itemService.getAllItems();
+        return new ApiResponse<>(HttpStatus.OK.value(),"모든 아이템 조회에 성공했습니다",responseDto);
+    }
+
+    public ApiResponse<List<ItemResponseDto>>getAllLikedItems(User user)
+    {
+        List<ItemResponseDto> responseDto = itemService.getAllLikedItems(user);
+        return new ApiResponse<>(HttpStatus.OK.value(),"좋아요한 아이템 조회에 성공했습니다",responseDto);
     }
 }

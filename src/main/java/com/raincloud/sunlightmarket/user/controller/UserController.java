@@ -45,7 +45,7 @@ public class UserController {
 
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
         response.addCookie(cookie);
-        return new ApiResponse<>(HttpStatus.OK.value(),"카카오 로그인 성공");
+        return new ApiResponse<>(HttpStatus.OK.value(),"OK");
     }
 
     @PutMapping("/profile")
@@ -54,7 +54,7 @@ public class UserController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         MyProfileResponseDto responseDto = userService.updateProfile(userDetails.getUser(), requestDto);
-        return new ApiResponse<>(HttpStatus.OK.value(),"프로필 업데이트 성공",responseDto);
+        return new ApiResponse<>(HttpStatus.OK.value(),"OK",responseDto);
     }
 
     @GetMapping("/profile")
@@ -62,7 +62,7 @@ public class UserController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         MyProfileResponseDto responseDto = userService.getProfile(userDetails.getUser());
-        return new ApiResponse<>(HttpStatus.OK.value(),"내 프로필 조회 성공",responseDto);
+        return new ApiResponse<>(HttpStatus.OK.value(),"OK",responseDto);
     }
 
     @GetMapping("/profile/{userId}")
@@ -70,7 +70,7 @@ public class UserController {
             @PathVariable Long userId
     ) {
         UserProfileResponseDto responseDto = userService.getUserProfile(userId);
-        return new ApiResponse<>(HttpStatus.OK.value(),"유저 프로필 조회 성공",responseDto);
+        return new ApiResponse<>(HttpStatus.OK.value(),"OK",responseDto);
     }
 
     @PutMapping("/password")
@@ -78,6 +78,6 @@ public class UserController {
             @RequestBody PasswordRequestDto passwordRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.updatePassword(userDetails.getUser(), passwordRequestDto);
-        return new ApiResponse<>(HttpStatus.OK.value(),"비밀번호 수정 성공");
+        return new ApiResponse<>(HttpStatus.OK.value(),"OK");
     }
 }
