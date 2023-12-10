@@ -45,7 +45,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(accessToken) && !jwtUtil.validateToken(accessToken)) {
             String refreshToken = jwtUtil.getJwtFromHeader(request, REFRESH_TOKEN_HEADER);
 
-            if (StringUtils.hasText(accessToken) && !jwtUtil.validateToken(refreshToken)) {
+            if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken)) {
                 User user = tokenRepository.findByToken(refreshToken);
                 accessToken = jwtUtil.createAccessToken(user.getEmail(), user.getRole()
                 ).substring(7);
